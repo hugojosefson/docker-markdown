@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+cat wrap_begin.html
+
+markdown_py \
+  -q \
+  -x plantuml \
+  -x mdx_gfm 2> >(grep -v '^Successful' >&2) \
+  | hxpipe \
+    | sed -r 's/^Ahref (.*)\.md$/Ahref \1.html/g' \
+    | sed -r 's/^Ahref (.*)\.markdown$/Ahref \1.html/g' \
+  | hxunpipe
+
+cat wrap_end.html
