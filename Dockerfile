@@ -3,7 +3,7 @@ FROM python:3.7-alpine
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
 RUN chmod +rx /tini
-ENTRYPOINT ["/tini", "--", "markdown_py"]
+ENTRYPOINT ["/tini", "--"]
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -21,7 +21,9 @@ RUN apk add --no-cache \
     && pip install \
     'Markdown<3' \
     py-gfm \
-    plantuml-markdown \
-    && echo done
+    plantuml-markdown
 
-CMD ["-x", "plantuml", "-x", "mdx_gfm"]
+COPY wrap_end.html .
+COPY wrap_begin.html .
+
+CMD cat wrap_begin.html && markdown_py -x plantuml -x mdx_gfm && cat wrap_end.html
