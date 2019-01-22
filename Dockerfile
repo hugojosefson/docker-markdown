@@ -3,7 +3,7 @@ FROM python:3.7-alpine
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
 RUN chmod +rx /tini
-ENTRYPOINT ["/tini", "--"]
+ENTRYPOINT ["/tini", "--", "bash", "-c"]
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -12,6 +12,7 @@ ENV PLANTUML_VERSION 1.2019.0
 ADD https://oss.sonatype.org/content/repositories/releases/net/sourceforge/plantuml/plantuml/${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar /app/plantuml.jar
 
 RUN apk add --no-cache \
+    bash \
     graphviz \
     openjdk8-jre \
     ttf-droid \
@@ -26,4 +27,5 @@ RUN apk add --no-cache \
 COPY wrap_end.html .
 COPY wrap_begin.html .
 
-CMD cat wrap_begin.html && markdown_py -x plantuml -x mdx_gfm && cat wrap_end.html
+CMD ["cat wrap_begin.html && markdown_py -q -x plantuml -x mdx_gfm 2> >(grep -v '^Successful' >&2) && cat wrap_end.html"]
+

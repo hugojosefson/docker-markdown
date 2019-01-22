@@ -13,7 +13,7 @@ cat README.md | docker run --rm -i hugojosefson/markdown > README.html
 Explore the Docker image manually:
 
 ```bash
-docker run --rm -it --entrypoint=sh hugojosefson/markdown
+docker run --rm -it --entrypoint=bash hugojosefson/markdown
 ```
 
 # Sample plantuml
