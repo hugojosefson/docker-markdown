@@ -1,12 +1,12 @@
 # plantuml-markdown-docker
 
 This wraps [mikitex70/plantuml-markdown](https://github.com/mikitex70/plantuml-markdown/)
-into a alpine docker container.
+and `py-gfm` into an alpine docker image.
 
 # Pull
 
 ```
-docker pull kerhac/plantuml-markdown
+docker pull hugojosefson/plantuml-markdown
 ```
 
 # Building
@@ -14,23 +14,23 @@ docker pull kerhac/plantuml-markdown
 Build docker images.
 
 ```
-docker build -t kerhac/plantuml-markdown .
+docker build -t hugojosefson/plantuml-markdown .
 ```
 
 # Usage
 Render `README.md` as html using docker container.
 
 ```
-cat README.md |docker run --rm --interactive kerhac/plantuml-markdown > README.html
+cat README.md |docker run --rm -i hugojosefson/plantuml-markdown > README.html
 ```
 
 # Tests
 
-The unittest are executed during image build but you might want to run them
+The unit tests are executed during image build but you might want to run them
 again.
 
 ```
-docker run -it --rm kerhac/plantuml-markdown  python -m unittest discover -v -s /app/test
+docker run -it --rm hugojosefson/plantuml-markdown python -m unittest discover -v -s /app/test
 ```
 
 # Sample plantuml
@@ -39,5 +39,12 @@ docker run -it --rm kerhac/plantuml-markdown  python -m unittest discover -v -s 
 @startuml
 Bob -> Alice : hello
 @enduml
+```
+
+# Sample GitHub Flavoured Markdown
+---------------
+```markdown
+ - [ ] todo
+ - [x] done
 ```
 

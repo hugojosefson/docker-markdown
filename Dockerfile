@@ -1,10 +1,15 @@
-FROM python:3.6-alpine
+FROM python:3.7-alpine
+
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
+RUN chmod +rx /tini
+ENTRYPOINT ["/tini", "--", "markdown_py"]
 
 RUN mkdir -p /app
 WORKDIR /app
 
-ENV PLANTUML_VERSION 1.2018.5
-ADD https://sourceforge.net/projects/plantuml/files/plantuml.${PLANTUML_VERSION}.jar/download /app/plantuml.jar
+ENV PLANTUML_VERSION 1.2019.0
+ADD https://oss.sonatype.org/content/repositories/releases/net/sourceforge/plantuml/plantuml/${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar /app/plantuml.jar
 
 RUN apk add --no-cache \
     graphviz \
@@ -13,7 +18,10 @@ RUN apk add --no-cache \
     ttf-droid-nonlatin \
     && echo -e '#!/usr/bin/env sh \njava -jar /app/plantuml.jar ${@}' >> /usr/local/bin/plantuml \
     && chmod +x /usr/local/bin/plantuml \
-    && pip install plantuml-markdown \
+    && pip install \
+    'Markdown<3' \
+    py-gfm \
+    plantuml-markdown \
     && echo done
 
-CMD markdown_py -x plantuml
+CMD ["-x", "plantuml", "-x", "mdx_gfm"]
