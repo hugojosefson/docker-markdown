@@ -8,7 +8,7 @@ ENTRYPOINT ["/tini", "--"]
 RUN mkdir -p /app
 WORKDIR /app
 
-ENV PLANTUML_VERSION 1.2019.0
+ENV PLANTUML_VERSION 1.2019.8
 ADD https://oss.sonatype.org/content/repositories/releases/net/sourceforge/plantuml/plantuml/${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar /app/plantuml.jar
 
 RUN apk add --no-cache \
