@@ -16,4 +16,4 @@ RUN apk add --no-cache \
     && pip install plantuml-markdown \
     && echo done
 
-CMD markdown_py -x plantuml
+CMD markdown_py -x plantuml_markdown
