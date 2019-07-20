@@ -1,3 +1,13 @@
+FROM node:12 as builder
+RUN npm install -g parcel
+RUN echo 'body{}' > cache-dependencies.css \
+ && parcel build --no-source-maps cache-dependencies.css
+RUN wget https://sindresorhus.com/github-markdown-css/github-markdown.css
+RUN parcel build --no-source-maps github-markdown.css --out-dir / --out-file github-markdown.min.css
+COPY wrap_end_1.html .
+COPY wrap_end_2.html .
+RUN cat wrap_end_1.html github-markdown.min.css wrap_end_2.html > /wrap_end.html
+
 FROM python:3.7-alpine
 
 ENV TINI_VERSION v0.18.0
@@ -25,8 +35,8 @@ RUN apk add --no-cache \
     py-gfm \
     plantuml-markdown
 
-COPY wrap_end.html .
 COPY wrap_begin.html .
+COPY --from=builder /wrap_end.html .
 COPY md2html .
 
 CMD ["./md2html"]
