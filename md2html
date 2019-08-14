@@ -9,8 +9,8 @@ markdown_py \
   -x plantuml_markdown \
   -x mdx_partial_gfm 2> >(grep -v '^Successful' >&2) \
   | hxpipe \
-    | sed -r 's/^Ahref (.*)\.md$/Ahref \1.html/g' \
-    | sed -r 's/^Ahref (.*)\.markdown$/Ahref \1.html/g' \
+    | sed -r 's/^Ahref CDATA ([^h][^t][^t][^p].*|.{1,3})\.md$/Ahref CDATA \1.html/g' \
+    | sed -r 's/^Ahref CDATA ([^h][^t][^t][^p].*|.{1,3})\.markdown$/Ahref CDATA \1.html/g' \
   | hxunpipe
 
 cat wrap_end.html
