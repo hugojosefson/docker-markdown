@@ -10,7 +10,7 @@ RUN cat wrap_end_1.html github-markdown.min.css wrap_end_2.html > /wrap_end.html
 
 FROM python:3.8-alpine
 
-ENV TINI_VERSION v0.18.0
+ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
 RUN chmod +rx /tini
 ENTRYPOINT ["/tini", "--"]
