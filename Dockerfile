@@ -30,7 +30,7 @@ RUN apk add --no-cache \
     ttf-droid-nonlatin \
     && echo -e '#!/usr/bin/env sh \njava -jar /app/plantuml.jar ${@}' >> /usr/local/bin/plantuml \
     && chmod +x /usr/local/bin/plantuml \
-    && pip install \
+    && pip install --use-feature=2020-resolver \
     'Markdown<3' \
     py-gfm \
     plantuml-markdown \
