@@ -1,4 +1,4 @@
-FROM node:12 as builder
+FROM node:14 as builder
 RUN npm install -g parcel
 RUN echo 'body{}' > cache-dependencies.css \
  && parcel build --no-source-maps cache-dependencies.css
