@@ -8,7 +8,7 @@ COPY wrap_end_1.html .
 COPY wrap_end_2.html .
 RUN cat wrap_end_1.html github-markdown.min.css wrap_end_2.html > /wrap_end.html
 
-FROM python:3.7-alpine
+FROM python:3.8-alpine
 
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
@@ -18,7 +18,7 @@ ENTRYPOINT ["/tini", "--"]
 RUN mkdir -p /app
 WORKDIR /app
 
-ENV PLANTUML_VERSION 1.2019.8
+ENV PLANTUML_VERSION 1.2020.2
 ADD https://oss.sonatype.org/content/repositories/releases/net/sourceforge/plantuml/plantuml/${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar /app/plantuml.jar
 
 RUN apk add --no-cache \
@@ -33,7 +33,8 @@ RUN apk add --no-cache \
     && pip install \
     'Markdown<3' \
     py-gfm \
-    plantuml-markdown
+    plantuml-markdown \
+    six
 
 COPY wrap_begin.html .
 COPY --from=builder /wrap_end.html .
