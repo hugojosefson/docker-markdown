@@ -2,15 +2,39 @@
 
 set -e
 
+function rename_markdown_to_html() {
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*)\.(md|markdown)$/Ahref CDATA \1.html/ig'
+}
+
+function link_readme_to_index() {
+  if [[ "${LINK_README_TO_INDEX}" != "true" ]]; then
+    cat
+    return
+  fi
+
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)?README\.html$/Ahref CDATA \1index.html/ig'
+}
+
+function link_index_html_to_dir() {
+  if [[ "${LINK_INDEX_TO_DIR}" != "true" ]]; then
+    cat
+    return
+  fi
+
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA index\.html$/Ahref CDATA .\//ig' |
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)index\.html$/Ahref CDATA \1/ig'
+}
+
 cat wrap_begin.html
 
 markdown_py \
   -q \
   -x plantuml_markdown \
-  -x mdx_partial_gfm 2> >(grep -v '^Successful' >&2) \
-  | hxpipe \
-    | sed -r 's/^Ahref CDATA ([^h][^t][^t][^p].*|.{1,3})\.md$/Ahref CDATA \1.html/g' \
-    | sed -r 's/^Ahref CDATA ([^h][^t][^t][^p].*|.{1,3})\.markdown$/Ahref CDATA \1.html/g' \
-  | hxunpipe
+  -x mdx_partial_gfm 2> >(grep -v '^Successful' >&2) |
+  hxpipe |
+  rename_markdown_to_html |
+  link_readme_to_index |
+  link_index_html_to_dir |
+  hxunpipe
 
 cat wrap_end.html
