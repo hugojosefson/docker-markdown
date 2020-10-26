@@ -3,7 +3,7 @@
 set -e
 
 function rename_markdown_to_html() {
-  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*)\.(md|markdown)$/Ahref CDATA \1.html/ig'
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*)\.(md|markdown)(#.*)?$/Ahref CDATA \1.html\3/ig'
 }
 
 function link_readme_to_index() {
@@ -12,7 +12,7 @@ function link_readme_to_index() {
     return
   fi
 
-  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)?README\.html$/Ahref CDATA \1index.html/ig'
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)?README\.html(#.*)?$/Ahref CDATA \1index.html\2/ig'
 }
 
 function link_index_html_to_dir() {
@@ -21,8 +21,8 @@ function link_index_html_to_dir() {
     return
   fi
 
-  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA index\.html$/Ahref CDATA .\//ig' |
-  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)index\.html$/Ahref CDATA \1/ig'
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA index\.html(#.*)?$/Ahref CDATA .\/\2/ig' |
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)index\.html(#.*)?$/Ahref CDATA \1\2/ig'
 }
 
 cat wrap_begin.html
