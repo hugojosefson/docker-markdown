@@ -35,7 +35,19 @@ Optional environment variable(s) to set via `docker run --env ...`:
 
 ```plantuml
 @startuml
-Alice -> Bob : POST /hello
+Alice -> Bob : POST /hello_png
+@enduml
+```
+
+```plantuml format="svg"
+@startuml
+Alice -> Bob : POST /hello_svg
+@enduml
+```
+
+```plantuml format="txt"
+@startuml
+Alice -> Bob : POST /hello_txt
 @enduml
 ```
 
