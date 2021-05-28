@@ -54,6 +54,8 @@ Alice -> Bob : POST /hello
 ---
 
 *Acknowledgements: This project wraps
-[mikitex70/plantuml-markdown](https://github.com/mikitex70/plantuml-markdown/)
-and `py-gfm` into an alpine docker image. I forked this from
+[mikitex70/plantuml-markdown](https://github.com/mikitex70/plantuml-markdown/),
+`py-gfm`, and
+[sindresorhus.com/github-markdown-css](https://sindresorhus.com/github-markdown-css)
+into an alpine docker image. I forked this from
 [kerhac/plantuml-markdown-docker](https://github.com/kerhac/plantuml-markdown-docker).*
