@@ -1,10 +1,10 @@
 FROM busybox as builder
-RUN wget https://sindresorhus.com/github-markdown-css/github-markdown.css
+ADD https://sindresorhus.com/github-markdown-css/github-markdown.css github-markdown.css
 COPY wrap_end_1.html .
 COPY wrap_end_2.html .
 RUN cat wrap_end_1.html github-markdown.css wrap_end_2.html > /wrap_end.html
 
-FROM python:3.9-alpine
+FROM python:3.10-alpine
 
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
@@ -14,8 +14,10 @@ ENTRYPOINT ["/tini", "--"]
 RUN mkdir -p /app
 WORKDIR /app
 
-ENV PLANTUML_VERSION 1.2021.10
+ENV PLANTUML_VERSION 1.2022.8
 ADD https://oss.sonatype.org/content/repositories/releases/net/sourceforge/plantuml/plantuml/${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar /app/plantuml.jar
+RUN echo -e '#!/usr/bin/env sh \njava -jar /app/plantuml.jar "${@}"' >> /usr/local/bin/plantuml \
+    && chmod +x /usr/local/bin/plantuml
 
 RUN apk add --no-cache \
     bash \
@@ -23,12 +25,13 @@ RUN apk add --no-cache \
     graphviz \
     openjdk8-jre \
     ttf-droid \
-    ttf-droid-nonlatin \
-    && echo -e '#!/usr/bin/env sh \njava -jar /app/plantuml.jar "${@}"' >> /usr/local/bin/plantuml \
-    && chmod +x /usr/local/bin/plantuml \
-    && pip install \
+    ttf-droid-nonlatin
+
+RUN pip install \
     markdown \
-    py-gfm \
+    markdown-checklist \
+    pymdown-extensions \
+    Pygments \
     plantuml-markdown \
     six
 
