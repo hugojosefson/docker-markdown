@@ -63,6 +63,15 @@ Alice -> Bob : POST /hello_txt
 - [ ] todo
 - [x] done
 
+# TODO
+
+- [ ] correct acknowledgements
+- [ ] check licenses
+- [ ] add example markdown file with all features
+- [ ] **copy** exact elements from https://sindresorhus.com/github-markdown-css/
+- [ ] **sync** exact elements from https://sindresorhus.com/github-markdown-css/
+  - [ ] use [parse5](https://github.com/inikulin/parse5) to parse html
+
 ---
 
 _Acknowledgements: This project wraps
