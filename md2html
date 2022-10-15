@@ -27,12 +27,7 @@ function link_index_html_to_dir() {
 
 cat wrap_begin.html
 
-markdown_py \
-  -q \
-  -x plantuml_markdown \
-  -x markdown_checklist.extension \
-  -x pymdownx.extra \
-  2> >(grep -v '^Successful' >&2) |
+cmark-gfm --extension footnotes --extension table --extension strikethrough --extension autolink --extension tagfilter --extension tasklist --validate-utf8 --github-pre-lang --table-prefer-style-attributes --full-info-string |
   hxpipe |
   rename_markdown_to_html |
   link_readme_to_index |
