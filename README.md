@@ -65,7 +65,7 @@ Alice -> Bob : POST /hello_txt
 
 # TODO
 
-- [ ] correct acknowledgements
+- [x] correct acknowledgements
 - [ ] check licenses
 - [ ] add example markdown file with all features
 - [ ] **copy** exact elements from https://sindresorhus.com/github-markdown-css/
@@ -75,8 +75,10 @@ Alice -> Bob : POST /hello_txt
 ---
 
 _Acknowledgements: This project wraps
-[mikitex70/plantuml-markdown](https://pypi.org/project/plantuml-markdown/),
-`py-gfm`, and
+[plantuml-markdown](https://pypi.org/project/plantuml-markdown/),
+[markdown-checklist](https://pypi.org/project/markdown-checklist/),
+[pymdown-extensions](https://pypi.org/project/pymdown-extensions/),
+[Pygments](https://pypi.org/project/Pygments/), and
 [sindresorhus.com/github-markdown-css](https://sindresorhus.com/github-markdown-css)
-into an alpine docker image. I forked this from
+into an alpine docker image. I forked this originally from
 [kerhac/plantuml-markdown-docker](https://github.com/kerhac/plantuml-markdown-docker)._
