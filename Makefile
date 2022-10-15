@@ -1,9 +1,13 @@
 ## Format and build the project.
-default: fmt README.html
+default: fmt README.html fixture.html
 
 ## Build the README.html file from README.md.
 README.html: image-id README.md
 	docker run --rm -i "$(file < image-id)" < README.md > README.html
+
+## Build the fixture.html file from fixture.md.
+fixture.html: image-id fixture.md
+	docker run --rm -i "$(file < image-id)" < fixture.md > fixture.html
 
 ## Build the Docker image.
 image-id: Dockerfile md2html $(wildcard wrap_*.html)
@@ -15,8 +19,8 @@ reset-image-id:
 	git restore image-id
 	touch image-id
 
-## Format markdown files.
+## Format README.md.
 fmt:
-	deno fmt $(wildcard *.md)
+	deno fmt README.md
 
 .PHONY: default fmt reset-image-id
