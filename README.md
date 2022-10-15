@@ -39,9 +39,9 @@ Alice -> Bob : POST /hello_png
 @enduml
 ```
 
-```plantuml format="svg"
+```plantuml format="svg_inline"
 @startuml
-Alice -> Bob : POST /hello_svg
+Alice -> Bob : POST /hello_svg_inline
 @enduml
 ```
 
