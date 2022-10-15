@@ -66,7 +66,7 @@ Alice -> Bob : POST /hello_txt
 # TODO
 
 - [x] correct acknowledgements
-- [ ] check licenses
+- [x] check licenses
 - [ ] add example markdown file with all features
 - [ ] **copy** exact elements from https://sindresorhus.com/github-markdown-css/
 - [ ] **sync** exact elements from https://sindresorhus.com/github-markdown-css/
