@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-docker build -t hugojosefson/markdown .
+docker build -t docker.io/hugojosefson/markdown:latest .

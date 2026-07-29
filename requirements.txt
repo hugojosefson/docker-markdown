@@ -1,0 +1,12 @@
+Markdown==3.10.2
+plantuml-markdown==3.11.2
+markdown-checklist==0.4.4
+pymdown-extensions==11.0.1
+Pygments==2.20.0
+PyYAML==6.0.3
+six==1.17.0
+urllib3==2.7.0
+requests==2.34.2
+certifi==2026.7.22
+charset-normalizer==3.4.9
+idna==3.18

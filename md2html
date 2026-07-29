@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
+IFS=$'\t\n'
 
-function rename_markdown_to_html() {
+rename_markdown_to_html() {
   sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*)\.(md|markdown)(#.*)?$/Ahref CDATA \1.html\3/ig'
 }
 
-function link_readme_to_index() {
-  if [[ "${LINK_README_TO_INDEX}" != "true" ]]; then
+link_readme_to_index() {
+  if [[ "${LINK_README_TO_INDEX:-}" != "true" ]]; then
     cat
     return
   fi
@@ -15,26 +16,33 @@ function link_readme_to_index() {
   sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)?README\.html(#.*)?$/Ahref CDATA \1index.html\2/ig'
 }
 
-function link_index_html_to_dir() {
-  if [[ "${LINK_INDEX_TO_DIR}" != "true" ]]; then
+link_index_html_to_dir() {
+  if [[ "${LINK_INDEX_TO_DIR:-}" != "true" ]]; then
     cat
     return
   fi
 
   sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA index\.html(#.*)?$/Ahref CDATA .\/\2/ig' |
-  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)index\.html(#.*)?$/Ahref CDATA \1\2/ig'
+    sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)index\.html(#.*)?$/Ahref CDATA \1\2/ig'
 }
 
-cat wrap_begin.html
+main() {
+  cat wrap_begin.html
 
-markdown_py \
-  -q \
-  -x plantuml_markdown \
-  -x mdx_partial_gfm 2> >(grep -v '^Successful' >&2) |
-  hxpipe |
-  rename_markdown_to_html |
-  link_readme_to_index |
-  link_index_html_to_dir |
-  hxunpipe
+  markdown_py \
+    -q \
+    -x plantuml_markdown \
+    -x markdown_checklist.extension \
+    -x pymdownx.extra \
+    -x pymdownx.magiclink \
+    -x pymdownx.tilde 2> >(grep -v '^Successful' >&2) |
+    hxpipe |
+    rename_markdown_to_html |
+    link_readme_to_index |
+    link_index_html_to_dir |
+    hxunpipe
 
-cat wrap_end.html
+  cat wrap_end.html
+}
+
+main "$@"
