@@ -18,7 +18,7 @@ LABEL org.opencontainers.image.title="markdown" \
       org.opencontainers.image.description="Markdown-to-HTML renderer with PlantUML" \
       org.opencontainers.image.source="https://github.com/hugojosefson/docker-markdown" \
       org.opencontainers.image.url="https://hub.docker.com/r/hugojosefson/markdown" \
-      org.opencontainers.image.licenses="MIT"
+      org.opencontainers.image.licenses="BSD-2-Clause"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
