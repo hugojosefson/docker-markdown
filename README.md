@@ -82,6 +82,13 @@ version record, and rebuild [wrap_end.html](wrap_end.html) atomically. Review th
 resulting diff before changing the version or checksum in
 [update-css.sh](update-css.sh).
 
+Third-party license and notice provenance is recorded in
+[third-party-license-sources.tsv](third-party-license-sources.tsv). Run
+[`./download-third-party-licenses.sh --notices-only`](download-third-party-licenses.sh)
+to download the notice set for review, or omit `--notices-only` to also download
+the listed source archives. The script verifies every download against its
+recorded SHA-256 and refuses to overwrite a changed review file.
+
 ## Release
 
 Pull requests and pushes build and test the image. A semantic version tag

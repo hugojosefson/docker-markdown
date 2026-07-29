@@ -26,13 +26,13 @@ WORKDIR /app
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache \
-      bash \
-      font-noto \
-      font-noto-cjk \
-      graphviz \
-      html-xml-utils \
-      openjdk21-jre \
-      tini \
+      bash=5.3.9-r1 \
+      font-noto=2026.06.01-r0 \
+      font-noto-cjk=0_git20220127-r1 \
+      graphviz=12.2.1-r3 \
+      html-xml-utils=8.7-r0 \
+      openjdk21-jre=21.0.11_p10-r0 \
+      tini=0.19.0-r3 \
     && addgroup -S markdown \
     && adduser -S -G markdown -h /app markdown
 

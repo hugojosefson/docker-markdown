@@ -78,6 +78,12 @@ update-css</code> to retrieve and checksum-verify that pinned release tag, updat
 version record, and rebuild <a href="wrap_end.html">wrap_end.html</a> atomically. Review the
 resulting diff before changing the version or checksum in
 <a href="update-css.sh">update-css.sh</a>.</p>
+<p>Third-party license and notice provenance is recorded in
+<a href="third-party-license-sources.tsv">third-party-license-sources.tsv</a>. Run
+<a href="download-third-party-licenses.sh"><code>./download-third-party-licenses.sh --notices-only</code></a>
+to download the notice set for review, or omit <code>--notices-only</code> to also download
+the listed source archives. The script verifies every download against its
+recorded SHA-256 and refuses to overwrite a changed review file.</p>
 <h2>Release</h2>
 <p>Pull requests and pushes build and test the image. A semantic version tag
 publishes <code>docker.io/hugojosefson/markdown</code> to Docker Hub with semantic tags
