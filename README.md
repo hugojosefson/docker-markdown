@@ -89,6 +89,10 @@ to download the notice set for review, or omit `--notices-only` to also download
 the listed source archives. The script verifies every download against its
 recorded SHA-256 and refuses to overwrite a changed review file.
 
+The image stores the project license at
+`/usr/share/licenses/markdown/LICENSE` and the approved dependency notices in
+`/usr/share/licenses/markdown/THIRD_PARTY_NOTICES/`.
+
 ## Release
 
 Pull requests and pushes build and test the image. A semantic version tag

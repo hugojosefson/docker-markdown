@@ -128,6 +128,7 @@ while IFS=$'\t' read -r kind relative_path expected_sha256 url component; do
       "${component}" "${expected_sha256}" "${actual_sha256}" >&2
     exit 1
   fi
+  chmod 0644 "${temporary}"
   mv "${temporary}" "${target}"
   trap - EXIT
   printf 'Downloaded %s\n' "${relative_path}"

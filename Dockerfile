@@ -17,8 +17,7 @@ FROM docker.io/library/python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e
 LABEL org.opencontainers.image.title="markdown" \
       org.opencontainers.image.description="Markdown-to-HTML renderer with PlantUML" \
       org.opencontainers.image.source="https://github.com/hugojosefson/docker-markdown" \
-      org.opencontainers.image.url="https://hub.docker.com/r/hugojosefson/markdown" \
-      org.opencontainers.image.licenses="BSD-2-Clause"
+      org.opencontainers.image.url="https://hub.docker.com/r/hugojosefson/markdown"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -39,6 +38,8 @@ RUN apk add --no-cache \
 COPY requirements.txt .
 RUN pip install --no-cache-dir --requirement requirements.txt
 
+COPY --chown=markdown:markdown LICENSE /usr/share/licenses/markdown/LICENSE
+COPY --chown=markdown:markdown THIRD_PARTY_NOTICES/ /usr/share/licenses/markdown/THIRD_PARTY_NOTICES/
 COPY --from=plantuml /plantuml.jar /app/plantuml.jar
 COPY md2html wrap_begin.html wrap_end_1.html wrap_end_2.html github-markdown.css ./
 RUN printf '%s\n' '#!/bin/sh' 'exec java -jar /app/plantuml.jar "$@"' > /usr/local/bin/plantuml \
@@ -54,6 +55,8 @@ RUN chmod 0555 test-fixtures.sh \
     && plantuml -tpng /tmp/smoke.puml \
     && test -s /tmp/smoke.png \
     && rm /tmp/smoke.puml /tmp/smoke.png \
+    && test -r /usr/share/licenses/markdown/LICENSE \
+    && test -r /usr/share/licenses/markdown/THIRD_PARTY_NOTICES/PlantUML-1.2026.6-COPYING \
     && ./test-fixtures.sh \
     && touch /tmp/test-passed
 

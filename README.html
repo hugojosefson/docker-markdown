@@ -84,6 +84,9 @@ resulting diff before changing the version or checksum in
 to download the notice set for review, or omit <code>--notices-only</code> to also download
 the listed source archives. The script verifies every download against its
 recorded SHA-256 and refuses to overwrite a changed review file.</p>
+<p>The image stores the project license at
+<code>/usr/share/licenses/markdown/LICENSE</code> and the approved dependency notices in
+<code>/usr/share/licenses/markdown/THIRD_PARTY_NOTICES/</code>.</p>
 <h2>Release</h2>
 <p>Pull requests and pushes build and test the image. A semantic version tag
 publishes <code>docker.io/hugojosefson/markdown</code> to Docker Hub with semantic tags
