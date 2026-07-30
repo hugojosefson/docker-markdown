@@ -80,19 +80,12 @@ make test
 ```
 
 `make test` builds `docker.io/hugojosefson/markdown:latest` and runs the
-source-artifact unit tests. The [Docker](https://www.docker.com/) build renders
+repository tests. The [Docker](https://www.docker.com/) build renders
 [README.md](README.md), [general.md](tests/fixtures/renderer/general.md), and
 [link-rewriting.md](tests/fixtures/renderer/link-rewriting.md), then shows a
 unified diff if an expected HTML fixture differs. Renderer expectations are in
 [tests/fixtures/renderer](tests/fixtures/renderer); GitHub API comparisons are
 in [tests/fixtures/github-api](tests/fixtures/github-api).
-
-Changes to source-artifact publication should also pass the local registry test.
-It requires [Docker](https://www.docker.com/) and [ORAS](https://oras.land/):
-
-```bash
-make source-integration-test
-```
 
 ## Update expected fixtures
 
@@ -111,22 +104,13 @@ Refresh the GitHub API comparison fixtures separately. This uses existing
 make gh-api-fixtures
 ```
 
-## Update GitHub styles
+## Update dependencies
 
-Only use this when upgrading the vendored GitHub Markdown CSS:
-
-```bash
-make update-css
-```
-
-[github-markdown.css](src/vendor/github-markdown.css) currently vendors
-[github-markdown-css v5.9.0](https://github.com/sindresorhus/github-markdown-css/releases/tag/v5.9.0),
-including automatic light/dark `prefers-color-scheme` support. The update
-command discovers the latest stable release, resolves its tag to an immutable
-commit, recalculates hashes, stages the versioned notice and provenance for
-review, and regenerates local and GitHub API fixtures. It requires existing
-[GitHub CLI](https://cli.github.com/) (`gh`) authentication for the GitHub API
-fixture refresh. Review the diff.
+After changing any dependency version, follow the
+[dependency update checklist](docs/dependencies.md#dependency-update-checklist).
+It covers notices, source checks, affected fixtures, and validation. Changes to
+image packages or source handling additionally require the checks under
+[When to run source checks](docs/corresponding-source.md#when-to-run-source-checks).
 
 ## Run CI locally
 
@@ -137,73 +121,6 @@ authentication with a token usable by the workflow:
 ```bash
 make ci-local
 ```
-
-## Update dependency notices
-
-Use this after changing a dependency version. Notice provenance and checksums
-live in
-[compliance/third-party-license-sources.tsv](compliance/third-party-license-sources.tsv).
-
-Download only the notice set for review:
-
-```bash
-./scripts/download-third-party-licenses.sh --notices-only
-```
-
-Omit `--notices-only` to also download the listed source archives:
-
-```bash
-./scripts/download-third-party-licenses.sh
-```
-
-The script verifies every download and refuses to overwrite a changed review
-file. The image stores the project license and approved dependency notices under
-`/usr/share/licenses/markdown/`.
-
-## Inspect corresponding-source inputs
-
-Use this when changing the image's packages or source-artifact workflow. It
-queries both platforms without downloading source files:
-
-```bash
-make source-inventory \
-  SOURCE_IMAGE=docker.io/hugojosefson/markdown@sha256:<index-digest>
-```
-
-The input must be a published multi-platform index because a native local build
-does not provide both platforms.
-
-Validate a collection request without downloading sources:
-
-```bash
-./scripts/source-artifact.sh collect \
-  docker.io/hugojosefson/markdown@sha256:<index-digest> \
-  vX.Y.Z source-artifact --dry-run
-```
-
-Before releasing, run the real collection path against a temporary
-multi-platform image on [Docker Hub](https://hub.docker.com/). Authenticate with
-`docker login`, ensure the working tree is clean, then run:
-
-```bash
-make source-collection-test
-```
-
-The test creates a local `v0.0.0` tag for the duration of the command, pushes a
-`source-test-<commit>` runtime image, and leaves the verified source under
-`source-artifact-test/` for review. It does not publish a source OCI artifact.
-Delete the temporary [Docker Hub](https://hub.docker.com/) tag after review.
-Override defaults when needed:
-
-```bash
-SOURCE_TEST_RELEASE=v0.0.1 \
-SOURCE_TEST_IMAGE=docker.io/hugojosefson/markdown \
-SOURCE_TEST_OUTPUT="$PWD/source-artifact-test" \
-make source-collection-test
-```
-
-[docs/corresponding-source.md](docs/corresponding-source.md) documents artifact
-retrieval and verification.
 
 # Release
 
@@ -233,24 +150,10 @@ The tag publishes
 with semantic version tags and `latest`. The image index includes an SBOM and
 provenance attestation.
 
-## Corresponding source
-
-The release job attaches a corresponding-source OCI artifact to the published
-image index. It applies these retention tags:
-
-```text
-source-vX.Y.Z
-source-sha256-<64-hex-index-digest>
-```
-
-Each source archive or sdist uses a separate OCI layer, allowing unchanged blobs
-to be reused across releases. See
-[docs/corresponding-source.md](docs/corresponding-source.md) for retrieval and
-verification commands.
-
-Source collection starts after the runtime image is published. A collection or
-attachment error therefore fails the release job after the runtime image may
-already be visible.
+Before publishing, review
+[Release behavior](docs/corresponding-source.md#release-behavior). Retrieval and
+verification commands are under
+[Retrieve and verify a release](docs/corresponding-source.md#retrieve-and-verify-a-release).
 
 _Acknowledgements: This project wraps
 [mikitex70/plantuml-markdown](https://pypi.org/project/plantuml-markdown/),

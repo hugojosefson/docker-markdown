@@ -73,16 +73,12 @@ container:</p>
 make<span class="w"> </span><span class="nb">test</span>
 </code></pre></div>
 <p><code>make test</code> builds <code>docker.io/hugojosefson/markdown:latest</code> and runs the
-source-artifact unit tests. The <a href="https://www.docker.com/">Docker</a> build renders
+repository tests. The <a href="https://www.docker.com/">Docker</a> build renders
 <a href="README.html">README.md</a>, <a href="tests/fixtures/renderer/general.html">general.md</a>, and
 <a href="tests/fixtures/renderer/link-rewriting.html">link-rewriting.md</a>, then shows a
 unified diff if an expected HTML fixture differs. Renderer expectations are in
 <a href="tests/fixtures/renderer">tests/fixtures/renderer</a>; GitHub API comparisons are
 in <a href="tests/fixtures/github-api">tests/fixtures/github-api</a>.</p>
-<p>Changes to source-artifact publication should also pass the local registry test.
-It requires <a href="https://www.docker.com/">Docker</a> and <a href="https://oras.land/">ORAS</a>:</p>
-<div class="highlight"><pre><span></span><code>make<span class="w"> </span>source-integration-test
-</code></pre></div>
 <h2>Update expected fixtures</h2>
 <p>Only update fixtures when the renderer's changed output is intentional:</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>fixtures
@@ -92,67 +88,18 @@ It requires <a href="https://www.docker.com/">Docker</a> and <a href="https://or
 <a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>) authentication:</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>gh-api-fixtures
 </code></pre></div>
-<h2>Update GitHub styles</h2>
-<p>Only use this when upgrading the vendored GitHub Markdown CSS:</p>
-<div class="highlight"><pre><span></span><code>make<span class="w"> </span>update-css
-</code></pre></div>
-<p><a href="src/vendor/github-markdown.css">github-markdown.css</a> currently vendors
-<a href="https://github.com/sindresorhus/github-markdown-css/releases/tag/v5.9.0">github-markdown-css v5.9.0</a>,
-including automatic light/dark <code>prefers-color-scheme</code> support. The update
-command discovers the latest stable release, resolves its tag to an immutable
-commit, recalculates hashes, stages the versioned notice and provenance for
-review, and regenerates local and GitHub API fixtures. It requires existing
-<a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>) authentication for the GitHub API
-fixture refresh. Review the diff.</p>
+<h2>Update dependencies</h2>
+<p>After changing any dependency version, follow the
+<a href="docs/dependencies.html#dependency-update-checklist">dependency update checklist</a>.
+It covers notices, source checks, affected fixtures, and validation. Changes to
+image packages or source handling additionally require the checks under
+<a href="docs/corresponding-source.html#when-to-run-source-checks">When to run source checks</a>.</p>
 <h2>Run CI locally</h2>
 <p>Requires <a href="https://www.docker.com/">Docker</a>, <a href="https://nektosact.com/">act</a> 0.2.86
 or newer, and existing <a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>)
 authentication with a token usable by the workflow:</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>ci-local
 </code></pre></div>
-<h2>Update dependency notices</h2>
-<p>Use this after changing a dependency version. Notice provenance and checksums
-live in
-<a href="compliance/third-party-license-sources.tsv">compliance/third-party-license-sources.tsv</a>.</p>
-<p>Download only the notice set for review:</p>
-<div class="highlight"><pre><span></span><code>./scripts/download-third-party-licenses.sh<span class="w"> </span>--notices-only
-</code></pre></div>
-<p>Omit <code>--notices-only</code> to also download the listed source archives:</p>
-<div class="highlight"><pre><span></span><code>./scripts/download-third-party-licenses.sh
-</code></pre></div>
-<p>The script verifies every download and refuses to overwrite a changed review
-file. The image stores the project license and approved dependency notices under
-<code>/usr/share/licenses/markdown/</code>.</p>
-<h2>Inspect corresponding-source inputs</h2>
-<p>Use this when changing the image's packages or source-artifact workflow. It
-queries both platforms without downloading source files:</p>
-<div class="highlight"><pre><span></span><code>make<span class="w"> </span>source-inventory<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="nv">SOURCE_IMAGE</span><span class="o">=</span>docker.io/hugojosefson/markdown@sha256:&lt;index-digest&gt;
-</code></pre></div>
-<p>The input must be a published multi-platform index because a native local build
-does not provide both platforms.</p>
-<p>Validate a collection request without downloading sources:</p>
-<div class="highlight"><pre><span></span><code>./scripts/source-artifact.sh<span class="w"> </span>collect<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>docker.io/hugojosefson/markdown@sha256:&lt;index-digest&gt;<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>vX.Y.Z<span class="w"> </span>source-artifact<span class="w"> </span>--dry-run
-</code></pre></div>
-<p>Before releasing, run the real collection path against a temporary
-multi-platform image on <a href="https://hub.docker.com/">Docker Hub</a>. Authenticate with
-<code>docker login</code>, ensure the working tree is clean, then run:</p>
-<div class="highlight"><pre><span></span><code>make<span class="w"> </span>source-collection-test
-</code></pre></div>
-<p>The test creates a local <code>v0.0.0</code> tag for the duration of the command, pushes a
-<code>source-test-&lt;commit&gt;</code> runtime image, and leaves the verified source under
-<code>source-artifact-test/</code> for review. It does not publish a source OCI artifact.
-Delete the temporary <a href="https://hub.docker.com/">Docker Hub</a> tag after review.
-Override defaults when needed:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">SOURCE_TEST_RELEASE</span><span class="o">=</span>v0.0.1<span class="w"> </span><span class="se">\</span>
-<span class="nv">SOURCE_TEST_IMAGE</span><span class="o">=</span>docker.io/hugojosefson/markdown<span class="w"> </span><span class="se">\</span>
-<span class="nv">SOURCE_TEST_OUTPUT</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">/source-artifact-test&quot;</span><span class="w"> </span><span class="se">\</span>
-make<span class="w"> </span>source-collection-test
-</code></pre></div>
-<p><a href="docs/corresponding-source.html">docs/corresponding-source.md</a> documents artifact
-retrieval and verification.</p>
 <h1>Release</h1>
 <h2>Prerequisites</h2>
 <p>Releases require these GitHub repository secrets:</p>
@@ -185,19 +132,10 @@ git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </
 <a href="https://hub.docker.com/r/hugojosefson/markdown"><code>docker.io/hugojosefson/markdown</code></a>
 with semantic version tags and <code>latest</code>. The image index includes an SBOM and
 provenance attestation.</p>
-<h2>Corresponding source</h2>
-<p>The release job attaches a corresponding-source OCI artifact to the published
-image index. It applies these retention tags:</p>
-<div class="highlight"><pre><span></span><code>source-vX.Y.Z
-source-sha256-&lt;64-hex-index-digest&gt;
-</code></pre></div>
-<p>Each source archive or sdist uses a separate OCI layer, allowing unchanged blobs
-to be reused across releases. See
-<a href="docs/corresponding-source.html">docs/corresponding-source.md</a> for retrieval and
-verification commands.</p>
-<p>Source collection starts after the runtime image is published. A collection or
-attachment error therefore fails the release job after the runtime image may
-already be visible.</p>
+<p>Before publishing, review
+<a href="docs/corresponding-source.html#release-behavior">Release behavior</a>. Retrieval and
+verification commands are under
+<a href="docs/corresponding-source.html#retrieve-and-verify-a-release">Retrieve and verify a release</a>.</p>
 <p><em>Acknowledgements: This project wraps
 <a href="https://pypi.org/project/plantuml-markdown/">mikitex70/plantuml-markdown</a>,
 <a href="https://pypi.org/project/markdown-checklist/">markdown-checklist</a>,
