@@ -6,8 +6,8 @@ IMAGE := docker.io/hugojosefson/markdown:latest
 build:
 	docker build --tag "$(IMAGE)" .
 
-## Build and run fixture tests. Diffs identify the mismatched fixture.
-test: build
+## Build and run fixture tests plus source-artifact unit tests.
+test: build source-test
 
 ## Regenerate fixtures with the pre-test runtime, then verify the final image.
 fixtures:
@@ -23,4 +23,17 @@ gh-api-fixtures:
 update-css:
 	./update-css.sh
 
-.PHONY: build test fixtures gh-api-fixtures update-css
+## Query a published immutable multi-platform image without downloading sources.
+source-inventory:
+	@test -n "$(SOURCE_IMAGE)" || { printf '%s\n' 'Set SOURCE_IMAGE=IMAGE@sha256:DIGEST; a native local build cannot supply both platforms.' >&2; exit 1; }
+	./source-artifact.sh inventory "$(SOURCE_IMAGE)" source-inventory.json
+
+## Test source artifact metadata parsing and canonicalization; no source artifacts are created.
+source-test:
+	python3 -m unittest discover --start-directory tests --pattern 'test_*.py'
+
+## Test ORAS publication and verification against an ephemeral local registry.
+source-integration-test:
+	bash tests/test_oras_integration.sh
+
+.PHONY: build test fixtures gh-api-fixtures update-css source-inventory source-test source-integration-test

@@ -1,0 +1,30 @@
+{
+  "packages": [
+    {
+      "name": "busybox",
+      "version": "1.0-r0",
+      "arch": "x86_64",
+      "license": "GPL-2.0-only",
+      "origin": "busybox",
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repository": "https://dl-cdn.alpinelinux.org/alpine/v3.22/main"
+    },
+    {
+      "name": "musl-utils",
+      "version": "1.2.5-r10",
+      "arch": "x86_64",
+      "license": "MIT AND BSD-2-Clause AND GPL-2.0-or-later",
+      "origin": "musl",
+      "commit": "dddddddddddddddddddddddddddddddddddddddd",
+      "provider_priority": 0
+    },
+    {
+      "name": "zlib",
+      "version": "1",
+      "arch": "x86_64",
+      "license": "Zlib",
+      "origin": "zlib",
+      "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ]
+}

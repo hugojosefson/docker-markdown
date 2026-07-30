@@ -40,6 +40,7 @@ RUN pip install --no-cache-dir --requirement requirements.txt
 
 COPY --chown=markdown:markdown LICENSE /usr/share/licenses/markdown/LICENSE
 COPY --chown=markdown:markdown THIRD_PARTY_NOTICES/ /usr/share/licenses/markdown/THIRD_PARTY_NOTICES/
+COPY --chown=markdown:markdown SOURCE.md /usr/share/licenses/markdown/SOURCE.md
 COPY --from=plantuml /plantuml.jar /app/plantuml.jar
 COPY md2html wrap_begin.html wrap_end_1.html wrap_end_2.html github-markdown.css ./
 RUN printf '%s\n' '#!/bin/sh' 'exec java -jar /app/plantuml.jar "$@"' > /usr/local/bin/plantuml \
@@ -56,6 +57,7 @@ RUN chmod 0555 test-fixtures.sh \
     && test -s /tmp/smoke.png \
     && rm /tmp/smoke.puml /tmp/smoke.png \
     && test -r /usr/share/licenses/markdown/LICENSE \
+    && test -r /usr/share/licenses/markdown/SOURCE.md \
     && test -r /usr/share/licenses/markdown/THIRD_PARTY_NOTICES/PlantUML-1.2026.6-COPYING \
     && ./test-fixtures.sh \
     && touch /tmp/test-passed

@@ -63,26 +63,51 @@ build renders <a href="README.md">README.md</a>, <a href="fixture.md">fixture.md
 <a href="link-rewriting.md">link-rewriting.md</a>, then fails with a unified diff if an<br>
 expected HTML fixture differs. The focused link fixture enables both<br>
 link-rewriting environment variables. Run <code class="notranslate">make fixtures</code> to render expected<br>
-files with the pre-test runtime, then verify the default build. Run <code class="notranslate">make gh-api-fixtures</code> to refresh the GitHub API comparison files using existing <code class="notranslate">gh</code><br>
-authentication.</p>
+files with the pre-test runtime, then verify the default build. Run<br>
+<code class="notranslate">make gh-api-fixtures</code> to refresh the GitHub API comparison files using existing<br>
+<code class="notranslate">gh</code> authentication.</p>
 <p><a href="github-markdown.css">github-markdown.css</a> vendors<br>
 <a href="https://github.com/sindresorhus/github-markdown-css/releases/tag/v5.9.0">github-markdown-css v5.9.0</a>,<br>
-including its automatic light/dark <code class="notranslate">prefers-color-scheme</code> support. Run <code class="notranslate">make update-css</code> to retrieve and checksum-verify that pinned release tag, update the<br>
-version record, and rebuild <a href="wrap_end.html">wrap_end.html</a> atomically. Review the<br>
-resulting diff before changing the version or checksum in<br>
+including its automatic light/dark <code class="notranslate">prefers-color-scheme</code> support. Run<br>
+<code class="notranslate">make update-css</code> to retrieve and checksum-verify that pinned release tag,<br>
+update the version record, and rebuild <a href="wrap_end.html">wrap_end.html</a><br>
+atomically. Review the resulting diff before changing the version or checksum in<br>
 <a href="update-css.sh">update-css.sh</a>.</p>
+<p>Third-party license and notice provenance is recorded in<br>
+<a href="third-party-license-sources.tsv">third-party-license-sources.tsv</a>. Run<br>
+<a href="download-third-party-licenses.sh"><code class="notranslate">./download-third-party-licenses.sh --notices-only</code></a><br>
+to download the notice set for review, or omit <code class="notranslate">--notices-only</code> to also download<br>
+the listed source archives. The script verifies every download against its<br>
+recorded SHA-256 and refuses to overwrite a changed review file.</p>
+<p>The image stores the project license at <code class="notranslate">/usr/share/licenses/markdown/LICENSE</code><br>
+and the approved dependency notices in<br>
+<code class="notranslate">/usr/share/licenses/markdown/THIRD_PARTY_NOTICES/</code>.</p>
+<p><code class="notranslate">make test</code> includes source-artifact tests. Run<br>
+<code class="notranslate">make source-inventory SOURCE_IMAGE=IMAGE@sha256:DIGEST</code> to query APK v3<br>
+metadata from a published multi-platform index without collecting source files.<br>
+A native local build does not provide both platforms.<br>
+<code class="notranslate">source-artifact.sh collect IMAGE@sha256:DIGEST vX.Y.Z OUTPUT --dry-run</code><br>
+validates the immutable subject and prints the collection plan.<br>
+<a href="SOURCE.md">SOURCE.md</a> documents OCI retrieval.</p>
 <h2>Release</h2>
 <p>Pull requests and pushes build and test the image. A semantic version tag<br>
-publishes <code class="notranslate">docker.io/hugojosefson/markdown</code> to Docker Hub with semantic tags<br>
-and <code class="notranslate">latest</code>, plus an SBOM and provenance attestation. Publishing uses the<br>
+publishes <code class="notranslate">docker.io/hugojosefson/markdown</code> to Docker Hub with semantic tags and<br>
+<code class="notranslate">latest</code>, plus an SBOM and provenance attestation. Publishing uses the<br>
 <code class="notranslate">DOCKERHUB_USERNAME</code> and <code class="notranslate">DOCKERHUB_TOKEN</code> GitHub secrets.</p>
+<p>The release job also attaches a corresponding-source OCI artifact to the image<br>
+index and tags it as <code class="notranslate">source-vX.Y.Z</code> and <code class="notranslate">source-sha256-&lt;64-hex-digest&gt;</code>. It<br>
+stores each source archive or sdist in a separate OCI layer, allowing unchanged<br>
+blobs to be reused across releases. It uses the existing Docker login<br>
+configuration for ORAS. Source collection runs after runtime publication, so a<br>
+collection or attachment error fails the job while the runtime image may already<br>
+be published.</p>
 <p><em>Acknowledgements: This project wraps<br>
 <a href="https://pypi.org/project/plantuml-markdown/" rel="nofollow">mikitex70/plantuml-markdown</a>,<br>
 <a href="https://pypi.org/project/markdown-checklist/" rel="nofollow">markdown-checklist</a>,<br>
 <a href="https://pypi.org/project/pymdown-extensions/" rel="nofollow">pymdown-extensions</a>,<br>
 <a href="https://pypi.org/project/Pygments/" rel="nofollow">Pygments</a>, and<br>
-<a href="https://github.com/sindresorhus/github-markdown-css">github-markdown-css</a><br>
-into an alpine docker image. I forked this originally from<br>
+<a href="https://github.com/sindresorhus/github-markdown-css">github-markdown-css</a> into<br>
+an alpine docker image. I forked this originally from<br>
 <a href="https://github.com/kerhac/plantuml-markdown-docker">kerhac/plantuml-markdown-docker</a>.</em></p></article>
 <style>
 .markdown-body {

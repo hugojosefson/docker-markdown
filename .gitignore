@@ -2,3 +2,6 @@
 /.*/
 !/.github/
 !/.github/**
+/source-inventory.json
+__pycache__/
+*.pyc
