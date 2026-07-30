@@ -27,6 +27,7 @@ update-css:
 
 ## Run the GitHub CI workflow locally; requires Docker, act, gh authentication, and its token scope.
 ci-local:
+	@act --version | python3 -c 'import re, sys; match = re.search(r"([0-9]+)\.([0-9]+)\.([0-9]+)", sys.stdin.read()); valid = match and tuple(map(int, match.groups())) >= (0, 2, 86); sys.exit(0 if valid else "act 0.2.86 or newer is required")'
 	@GITHUB_TOKEN="$$(gh auth token)" act --secret GITHUB_TOKEN --workflows .github/workflows/ci.yml
 
 ## Query a published immutable multi-platform image without downloading sources.

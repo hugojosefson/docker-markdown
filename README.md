@@ -130,9 +130,9 @@ fixture refresh. Review the diff.
 
 ## Run CI locally
 
-Requires [Docker](https://www.docker.com/), [act](https://nektosact.com/), and
-existing [GitHub CLI](https://cli.github.com/) (`gh`) authentication with a
-token usable by the workflow:
+Requires [Docker](https://www.docker.com/), [act](https://nektosact.com/) 0.2.86
+or newer, and existing [GitHub CLI](https://cli.github.com/) (`gh`)
+authentication with a token usable by the workflow:
 
 ```bash
 make ci-local

@@ -95,9 +95,9 @@ review, and regenerates local and GitHub API fixtures. It requires existing<br>
 <a href="https://cli.github.com/">GitHub CLI</a> (<code class="notranslate">gh</code>) authentication for the GitHub API<br>
 fixture refresh. Review the diff.</p>
 <h2>Run CI locally</h2>
-<p>Requires <a href="https://www.docker.com/" rel="nofollow">Docker</a>, <a href="https://nektosact.com/" rel="nofollow">act</a>, and<br>
-existing <a href="https://cli.github.com/">GitHub CLI</a> (<code class="notranslate">gh</code>) authentication with a<br>
-token usable by the workflow:</p>
+<p>Requires <a href="https://www.docker.com/" rel="nofollow">Docker</a>, <a href="https://nektosact.com/" rel="nofollow">act</a> 0.2.86<br>
+or newer, and existing <a href="https://cli.github.com/">GitHub CLI</a> (<code class="notranslate">gh</code>)<br>
+authentication with a token usable by the workflow:</p>
 <div class="highlight highlight-source-shell"><pre class="notranslate">make ci-local</pre></div>
 <h2>Update dependency notices</h2>
 <p>Use this after changing a dependency version. Notice provenance and checksums<br>
