@@ -1,3 +1,7 @@
 .*.swp
 /.*/
-/README.html
+!/.github/
+!/.github/**
+/source-inventory.json
+__pycache__/
+*.pyc

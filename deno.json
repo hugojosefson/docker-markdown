@@ -1,0 +1,9 @@
+{
+  "exclude": [
+    "THIRD_PARTY_NOTICES",
+    "LICENSE",
+    "src/templates",
+    "src/vendor",
+    "tests/fixtures"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "artifactType": "application/vnd.hugojosefson.markdown.source.v1",
+  "alpineImage": "docker.io/library/alpine:3.22@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce",
+  "aportsRepository": "https://gitlab.alpinelinux.org/alpine/aports.git",
+  "plantumlCommit": "6287b33c5d1be2f7b0d480687d0b5a1accbd7971",
+  "plantumlRepository": "https://github.com/plantuml/plantuml.git",
+  "plantumlTagTemplate": "v{version}",
+  "pythonImage": "docker.io/library/python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92",
+  "expectedPythonRequirements": 12,
+  "copyleftLicensePatterns": ["GPL", "LGPL", "EPL", "MPL"]
+}

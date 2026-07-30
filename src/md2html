@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+IFS=$'\t\n'
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly script_dir
+
+rename_markdown_to_html() {
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*)\.(md|markdown)(#.*)?$/Ahref CDATA \1.html\3/ig'
+}
+
+link_readme_to_index() {
+  if [[ "${LINK_README_TO_INDEX:-}" != "true" ]]; then
+    cat
+    return
+  fi
+
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)?README\.html(#.*)?$/Ahref CDATA \1index.html\2/ig'
+}
+
+link_index_html_to_dir() {
+  if [[ "${LINK_INDEX_TO_DIR:-}" != "true" ]]; then
+    cat
+    return
+  fi
+
+  sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA index\.html(#.*)?$/Ahref CDATA .\/\2/ig' |
+    sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*\/)index\.html(#.*)?$/Ahref CDATA \1\2/ig'
+}
+
+main() {
+  cat "${script_dir}/templates/wrap_begin.html"
+
+  markdown_py \
+    -q \
+    -x plantuml_markdown \
+    -x markdown_checklist.extension \
+    -x pymdownx.extra \
+    -x pymdownx.magiclink \
+    -x pymdownx.tilde 2> >(grep -v '^Successful' >&2) |
+    hxpipe |
+    rename_markdown_to_html |
+    link_readme_to_index |
+    link_index_html_to_dir |
+    hxunpipe
+
+  cat "${script_dir}/templates/wrap_end.html"
+}
+
+main "$@"
