@@ -22,6 +22,19 @@ digest() { [[ "${1}" =~ ^sha256:[0-9a-f]{64}$ ]] || die "digest must be sha256:<
 subject() { [[ "${1}" =~ ^[^@[:space:]]+@sha256:[0-9a-f]{64}$ ]] || die "image must be IMAGE@sha256:<64 lowercase hex characters>"; }
 policy() { python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))[sys.argv[2]])' "${POLICY}" "${1}"; }
 
+platform_reference() (
+  local image="${1}" wanted="${2}" temporary architecture platform_digest selected=""
+  require docker; require python3; subject "${image}"
+  temporary="$(mktemp)"
+  trap 'rm -f "${temporary}"' EXIT
+  docker buildx imagetools inspect --raw "${image}" > "${temporary}"
+  while IFS=$'\t' read -r architecture platform_digest; do
+    if [[ "${architecture}" == "${wanted}" ]]; then selected="${platform_digest}"; fi
+  done < <(python3 "${HELPER}" platforms --input "${temporary}")
+  [[ -n "${selected}" ]] || die "image lacks linux/${wanted}: ${image}"
+  printf '%s@%s\n' "${image%@*}" "${selected}"
+)
+
 inventory() (
   local image="${1}" output="${2}" architecture="${3}" raw temporary
   require docker; require python3; subject "${image}"
@@ -78,8 +91,8 @@ collect_into() {
   git_revision="$(git -C "${ROOT}" rev-parse HEAD)"
   [[ "$(git -C "${ROOT}" rev-parse "refs/tags/${release}^{commit}")" == "${git_revision}" ]] \
     || die "release tag ${release} does not resolve to HEAD"
-  alpine="$(policy alpineImage)"; aports="$(policy aportsRepository)"
-  plantuml_commit="$(policy plantumlCommit)"; python_image="$(policy pythonImage)"; expected_python="$(policy expectedPythonRequirements)"
+  alpine="$(platform_reference "$(policy alpineImage)" amd64)"; aports="$(policy aportsRepository)"
+  plantuml_commit="$(policy plantumlCommit)"; python_image="$(platform_reference "$(policy pythonImage)" amd64)"; expected_python="$(policy expectedPythonRequirements)"
   plantuml_version="$(python3 -c 'import re,sys; match=re.search(r"ARG PLANTUML_VERSION=([^\\n]+)", open(sys.argv[1], encoding="utf-8").read()); print(match.group(1) if match else "")' "${ROOT}/Dockerfile")"
   [[ -n "${plantuml_version}" ]] || die "Dockerfile lacks PLANTUML_VERSION"
   inventory_both "${image}" "${output}/apk-inventory.json"
@@ -93,7 +106,8 @@ collect_into() {
     staging="${output}/.stage-${origin}-${commit}"
     mkdir -p "${staging}/aports/${origin}/${commit}" "${staging}/distfiles/${origin}/${commit}"
     git -C "${output}/.aports" archive --format=tar "${commit}:${package_path}" | tar -x -C "${staging}/aports/${origin}/${commit}"
-    docker run --rm --mount "type=bind,src=${staging},dst=/work" -w /work "${alpine}" sh -ec \
+    docker run --rm --platform linux/amd64 \
+      --mount "type=bind,src=${staging},dst=/work" -w /work "${alpine}" sh -ec \
       'apk add --no-cache abuild >/dev/null; adduser -D collector; chown -R collector:collector /work; su collector -s /bin/sh -c "cd /work/aports/$1/$2 && SRCDEST=/work/distfiles/$1/$2 abuild fetch" sh "$1" "$2"' sh "${origin}" "${commit}"
     python3 "${HELPER}" archive --source-dir "${staging}" --output "${output}/alpine/${origin}-${commit}.tar"
     rm -rf "${staging}"
@@ -101,7 +115,8 @@ collect_into() {
   rm -f "${origins}"
   rm -rf "${output}/.aports"
   mkdir -p "${output}/python"
-  docker run --rm -v "${ROOT}:/project:ro" -v "${output}/python:/output" "${python_image}" \
+  docker run --rm --platform linux/amd64 \
+    -v "${ROOT}:/project:ro" -v "${output}/python:/output" "${python_image}" \
     sh -ec 'pip download --no-deps --no-binary=:all: --requirement /project/requirements.txt --dest /output'
   local -a sdists=("${output}/python/"*)
   [[ "${#sdists[@]}" -eq "${expected_python}" ]] || die "expected ${expected_python} Python sdists, found ${#sdists[@]}"
