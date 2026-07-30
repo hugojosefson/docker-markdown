@@ -28,6 +28,31 @@ require() {
   }
 }
 
+discover_builder() {
+  docker buildx ls --format json | python3 -c '
+import json
+import sys
+
+candidate = ""
+requested = sys.argv[1]
+for line in sys.stdin:
+    builder = json.loads(line)
+    platforms = {
+        platform.rstrip("*")
+        for node in builder.get("Nodes", [])
+        for platform in node.get("Platforms", [])
+    }
+    if (
+        not candidate
+        and (not requested or builder.get("Name") == requested)
+        and builder.get("Driver") != "docker"
+        and {"linux/amd64", "linux/arm64"} <= platforms
+    ):
+        candidate = builder["Name"]
+print(candidate)
+' "${1}"
+}
+
 for command in docker git python3; do
   require "${command}"
 done
@@ -56,9 +81,22 @@ done
 revision="$(git -C "${root}" rev-parse --short=12 HEAD)"
 runtime_tag="source-test-${revision}"
 runtime_reference="${image}:${runtime_tag}"
+builder="$(discover_builder "${SOURCE_TEST_BUILDER:-}")"
+[[ -n "${builder}" ]] || {
+  if [[ -n "${SOURCE_TEST_BUILDER:-}" ]]; then
+    printf '%s: %s\n' \
+      'SOURCE_TEST_BUILDER is not a non-docker builder advertising linux/amd64 and linux/arm64' \
+      "${SOURCE_TEST_BUILDER}" >&2
+  else
+    printf 'No non-docker buildx builder advertises linux/amd64 and linux/arm64.\n' >&2
+  fi
+  printf 'Create one with multi-platform support or set SOURCE_TEST_BUILDER.\n' >&2
+  exit 1
+}
 
 if [[ "${dry_run}" == true ]]; then
   printf 'Would create local tag: %s\n' "${release}"
+  printf 'Would use buildx builder: %s\n' "${builder}"
   printf 'Would push temporary image: %s\n' "${runtime_reference}"
   printf 'Would collect sources into: %s\n' "${output}"
   exit 0
@@ -76,6 +114,7 @@ cleanup() {
 trap cleanup EXIT
 
 docker buildx build \
+  --builder "${builder}" \
   --platform linux/amd64,linux/arm64 \
   --provenance=false \
   --tag "${runtime_reference}" \
@@ -88,7 +127,7 @@ subject_digest="$(
     python3 -c 'import json, sys; print(json.load(sys.stdin)["digest"])'
 )"
 
-"${root}/scripts/source-artifact.sh" collect \
+SOURCE_ARTIFACT_BUILDER="${builder}" "${root}/scripts/source-artifact.sh" collect \
   "${image}@${subject_digest}" \
   "${release}" \
   "${output}"

@@ -23,12 +23,33 @@ subject() { [[ "${1}" =~ ^[^@[:space:]]+@sha256:[0-9a-f]{64}$ ]] || die "image m
 policy() { python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))[sys.argv[2]])' "${POLICY}" "${1}"; }
 
 inventory() (
-  local image="${1}" output="${2}" architecture="${3}" raw
+  local image="${1}" output="${2}" architecture="${3}" raw temporary
   require docker; require python3; subject "${image}"
-  raw="$(mktemp)"
-  trap 'rm -f "${raw}"' EXIT
-  docker run --rm --platform "linux/${architecture}" --entrypoint /sbin/apk "${image}" \
-    query --from installed --fields name,version,arch,license,origin,commit --format json '*' > "${raw}"
+  temporary="$(mktemp -d)"
+  trap 'rm -rf "${temporary}"' EXIT
+  raw="${temporary}/apk-inventory.json"
+  if [[ -n "${SOURCE_ARTIFACT_BUILDER:-}" ]]; then
+    mkdir -p "${temporary}/context"
+    printf '%s\n' \
+      '# syntax=docker/dockerfile:1' \
+      'ARG SOURCE_IMAGE=scratch' \
+      "FROM \${SOURCE_IMAGE} AS inventory" \
+      "RUN apk query --from installed --fields name,version,arch,license,origin,commit --format json '*' > /apk-inventory.json" \
+      'FROM scratch' \
+      'COPY --from=inventory /apk-inventory.json /apk-inventory.json' \
+      > "${temporary}/context/Dockerfile"
+    docker buildx build \
+      --builder "${SOURCE_ARTIFACT_BUILDER}" \
+      --platform "linux/${architecture}" \
+      --build-arg "SOURCE_IMAGE=${image}" \
+      --output "type=local,dest=${temporary}/output" \
+      "${temporary}/context"
+    raw="${temporary}/output/apk-inventory.json"
+    [[ -f "${raw}" ]] || die "buildx inventory did not produce output for ${architecture}"
+  else
+    docker run --rm --platform "linux/${architecture}" --entrypoint /sbin/apk "${image}" \
+      query --from installed --fields name,version,arch,license,origin,commit --format json '*' > "${raw}"
+  fi
   python3 "${HELPER}" normalize --architecture "${architecture}" --input "${raw}" --output "${output}"
 )
 

@@ -54,7 +54,11 @@ make source-collection-test
 The test creates a local `v0.0.0` tag for the duration of the command, pushes a
 `source-test-<commit>` runtime image, and leaves the verified source under
 `source-artifact-test/` for review. It does not publish a source OCI artifact.
-Delete the temporary [Docker Hub](https://hub.docker.com/) tag after review.
+It uses `SOURCE_TEST_BUILDER` when set; otherwise it selects an existing
+non-`docker` buildx builder that advertises `linux/amd64` and `linux/arm64`. The
+same builder extracts each platform's package inventory, so host-level
+foreign-architecture `docker run` support is not required. Delete the temporary
+[Docker Hub](https://hub.docker.com/) tag after review.
 
 Override defaults when needed:
 
@@ -62,6 +66,7 @@ Override defaults when needed:
 SOURCE_TEST_RELEASE=v0.0.1 \
 SOURCE_TEST_IMAGE=docker.io/hugojosefson/markdown \
 SOURCE_TEST_OUTPUT="$PWD/source-artifact-test" \
+SOURCE_TEST_BUILDER=multi-platform \
 make source-collection-test
 ```
 
