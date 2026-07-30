@@ -43,4 +43,8 @@ source-test:
 source-integration-test:
 	bash tests/test_oras_integration.sh
 
-.PHONY: build test fixtures gh-api-fixtures update-css ci-local source-inventory source-test source-integration-test
+## Build a temporary published image and collect its real corresponding sources.
+source-collection-test:
+	./scripts/test-source-collection.sh
+
+.PHONY: build test fixtures gh-api-fixtures update-css ci-local source-inventory source-test source-integration-test source-collection-test

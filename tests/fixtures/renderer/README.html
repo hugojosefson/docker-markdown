@@ -136,6 +136,21 @@ does not provide both platforms.</p>
 <span class="w">  </span>docker.io/hugojosefson/markdown@sha256:&lt;index-digest&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>vX.Y.Z<span class="w"> </span>source-artifact<span class="w"> </span>--dry-run
 </code></pre></div>
+<p>Before releasing, run the real collection path against a temporary
+multi-platform image on <a href="https://hub.docker.com/">Docker Hub</a>. Authenticate with
+<code>docker login</code>, ensure the working tree is clean, then run:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>source-collection-test
+</code></pre></div>
+<p>The test creates a local <code>v0.0.0</code> tag for the duration of the command, pushes a
+<code>source-test-&lt;commit&gt;</code> runtime image, and leaves the verified source under
+<code>source-artifact-test/</code> for review. It does not publish a source OCI artifact.
+Delete the temporary <a href="https://hub.docker.com/">Docker Hub</a> tag after review.
+Override defaults when needed:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">SOURCE_TEST_RELEASE</span><span class="o">=</span>v0.0.1<span class="w"> </span><span class="se">\</span>
+<span class="nv">SOURCE_TEST_IMAGE</span><span class="o">=</span>docker.io/hugojosefson/markdown<span class="w"> </span><span class="se">\</span>
+<span class="nv">SOURCE_TEST_OUTPUT</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">/source-artifact-test&quot;</span><span class="w"> </span><span class="se">\</span>
+make<span class="w"> </span>source-collection-test
+</code></pre></div>
 <p><a href="docs/corresponding-source.html">docs/corresponding-source.md</a> documents artifact
 retrieval and verification.</p>
 <h1>Release</h1>

@@ -181,6 +181,27 @@ Validate a collection request without downloading sources:
   vX.Y.Z source-artifact --dry-run
 ```
 
+Before releasing, run the real collection path against a temporary
+multi-platform image on [Docker Hub](https://hub.docker.com/). Authenticate with
+`docker login`, ensure the working tree is clean, then run:
+
+```bash
+make source-collection-test
+```
+
+The test creates a local `v0.0.0` tag for the duration of the command, pushes a
+`source-test-<commit>` runtime image, and leaves the verified source under
+`source-artifact-test/` for review. It does not publish a source OCI artifact.
+Delete the temporary [Docker Hub](https://hub.docker.com/) tag after review.
+Override defaults when needed:
+
+```bash
+SOURCE_TEST_RELEASE=v0.0.1 \
+SOURCE_TEST_IMAGE=docker.io/hugojosefson/markdown \
+SOURCE_TEST_OUTPUT="$PWD/source-artifact-test" \
+make source-collection-test
+```
+
 [docs/corresponding-source.md](docs/corresponding-source.md) documents artifact
 retrieval and verification.
 
