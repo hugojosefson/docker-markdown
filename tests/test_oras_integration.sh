@@ -60,20 +60,20 @@ with open(sys.argv[1], "w", encoding="utf-8") as output:
         "selected": [],
     }, output)
 PY
-python3 "${ROOT}/source-artifact.py" index \
+python3 "${ROOT}/scripts/source-artifact.py" index \
   --inventory "${source_dir}/apk-inventory.json" \
   --source-dir "${source_dir}" \
   --output "${source_dir}/source-index.json" \
-  --policy "${ROOT}/source-artifact-policy.json" \
+  --policy "${ROOT}/compliance/source-artifact-policy.json" \
   --release v1.2.3 \
   --git aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
   --image "${repository}@${subject_digest}" \
   --plantuml-version 1.2026.6 \
   --plantuml-commit 6287b33c5d1be2f7b0d480687d0b5a1accbd7971
 
-artifact_digest="$(SOURCE_ARTIFACT_PLAIN_HTTP=true "${ROOT}/source-artifact.sh" \
+artifact_digest="$(SOURCE_ARTIFACT_PLAIN_HTTP=true "${ROOT}/scripts/source-artifact.sh" \
   publish "${repository}" "${subject_digest}" v1.2.3 "${source_dir}")"
 [[ "$(oras resolve --plain-http "${repository}:source-v1.2.3")" == "${artifact_digest}" ]]
 [[ "$(oras resolve --plain-http "${repository}:source-sha256-${subject_digest#sha256:}")" == "${artifact_digest}" ]]
-SOURCE_ARTIFACT_PLAIN_HTTP=true "${ROOT}/source-artifact.sh" verify-published \
+SOURCE_ARTIFACT_PLAIN_HTTP=true "${ROOT}/scripts/source-artifact.sh" verify-published \
   "${repository}" "${subject_digest}" v1.2.3 "${artifact_digest}"

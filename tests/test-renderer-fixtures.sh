@@ -3,13 +3,22 @@
 set -euo pipefail
 IFS=$'\t\n'
 
-for fixture in README fixture link-rewriting; do
+root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+readonly root
+fixtures="${root}/tests/fixtures/renderer"
+readonly fixtures
+
+for fixture in README general link-rewriting; do
+  input="${fixtures}/${fixture}.md"
+  if [[ "${fixture}" == "README" ]]; then
+    input="${root}/README.md"
+  fi
   actual="$(mktemp)"
   trap 'rm -f "${actual}"' EXIT
   if [[ "${fixture}" == "link-rewriting" ]]; then
-    LINK_README_TO_INDEX=true LINK_INDEX_TO_DIR=true ./md2html < "${fixture}.md" > "${actual}"
+    LINK_README_TO_INDEX=true LINK_INDEX_TO_DIR=true "${root}/src/md2html" < "${input}" > "${actual}"
   else
-    ./md2html < "${fixture}.md" > "${actual}"
+    "${root}/src/md2html" < "${input}" > "${actual}"
   fi
   if ! grep -Fq '<body class="markdown-body">' "${actual}" || grep -Fq '<article class="markdown-body">' "${actual}"; then
     printf 'Fixture failed: markdown-body must be applied to body, not article.\n' >&2
@@ -23,14 +32,14 @@ for fixture in README fixture link-rewriting; do
       exit 1
     fi
   fi
-  if [[ "${fixture}" == "fixture" ]]; then
+  if [[ "${fixture}" == "general" ]]; then
     if ! grep -Fq '<del>Scratch this.</del>' "${actual}" ||
       ! grep -Fq '<a href="https://github.com/sindresorhus/generate-github-markdown-css/' "${actual}"; then
       printf 'Fixture failed: GFM strikethrough and automatic links must render.\n' >&2
       exit 1
     fi
   fi
-  if ! diff -u "${fixture}.html" "${actual}"; then
+  if ! diff -u "${fixtures}/${fixture}.html" "${actual}"; then
     printf 'Fixture failed: %s.md differs from %s.html. Run make fixtures to accept the renderer output.\n' "${fixture}" "${fixture}" >&2
     exit 1
   fi

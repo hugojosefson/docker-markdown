@@ -14,13 +14,13 @@ oras discover "${image}@${subject}" \
 oras pull "${image}@${artifact}" --output source-vX.Y.Z
 mkdir source-verifier
 tar -xf source-vX.Y.Z/project/*.tar -C source-verifier
-python3 source-verifier/source-artifact.py verify \
+python3 source-verifier/scripts/source-artifact.py verify \
   --index source-vX.Y.Z/source-index.json --source-dir source-vX.Y.Z \
-  --policy source-verifier/source-artifact-policy.json \
+  --policy source-verifier/compliance/source-artifact-policy.json \
   --artifact-type application/vnd.hugojosefson.markdown.source.v1 \
   --release vX.Y.Z --subject "${image}@${subject}"
 # Discover the direct referrer, pull it, and run the same strict verification:
-./source-artifact.sh verify-published "${image}" "${subject}" vX.Y.Z "${artifact}"
+./scripts/source-artifact.sh verify-published "${image}" "${subject}" vX.Y.Z "${artifact}"
 ```
 
 The artifact has tags `source-vX.Y.Z` and `source-sha256-<64-hex-digest>`, but

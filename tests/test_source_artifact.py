@@ -7,8 +7,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HELPER = ROOT / "source-artifact.py"
-POLICY = ROOT / "source-artifact-policy.json"
+HELPER = ROOT / "scripts/source-artifact.py"
+POLICY = ROOT / "compliance/source-artifact-policy.json"
 SUBJECT = "example.invalid/markdown@sha256:" + "1" * 64
 
 
@@ -21,7 +21,7 @@ class SourceArtifactTests(unittest.TestCase):
         files = []
         for architecture in ("amd64", "arm64"):
             output = directory / f"{architecture}.json"
-            run("normalize", "--architecture", architecture, "--input", ROOT / f"tests/fixtures/apk-{architecture}.json", "--output", output)
+            run("normalize", "--architecture", architecture, "--input", ROOT / f"tests/fixtures/apk/apk-{architecture}.json", "--output", output)
             files.append(output)
         merged = directory / "merged.json"
         run("merge", "--policy", POLICY, "--input", *files, "--output", merged)
@@ -30,7 +30,7 @@ class SourceArtifactTests(unittest.TestCase):
     def test_normalize_is_canonical(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "inventory.json"
-            run("normalize", "--architecture", "amd64", "--input", ROOT / "tests/fixtures/apk-amd64.json", "--output", output)
+            run("normalize", "--architecture", "amd64", "--input", ROOT / "tests/fixtures/apk/apk-amd64.json", "--output", output)
             self.assertEqual(output.read_text(), json.dumps(json.loads(output.read_text()), indent=2, sort_keys=True) + "\n")
 
     def test_platforms_requires_one_manifest_per_architecture(self):
@@ -165,7 +165,7 @@ class SourceArtifactTests(unittest.TestCase):
             self.assertNotEqual(run("archive", "--source-dir", source, "--output", directory / "bad.tar", check=False).returncode, 0)
 
     def test_collect_dry_run_rejects_mutable_and_invalid_tags(self):
-        script = ROOT / "source-artifact.sh"
+        script = ROOT / "scripts/source-artifact.sh"
         bad_image = subprocess.run([script, "collect", "example.invalid/markdown:latest", "v1.2.3", "out", "--dry-run"], text=True, capture_output=True)
         self.assertNotEqual(bad_image.returncode, 0)
         bad_tag = subprocess.run([script, "collect", SUBJECT, "1.2.3", "out", "--dry-run"], text=True, capture_output=True)

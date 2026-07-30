@@ -1,4 +1,181 @@
-</article>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="markdown-body">
+<article>
+<h1>docker.io/hugojosefson/markdown</h1>
+<p>Renders markdown syntax to html syntax.</p>
+<h1>Usage</h1>
+<p>Pipe html contents into the process, and you will get html as output.</p>
+<h2>Examples</h2>
+<p>Render <code class="notranslate">README.md</code> as html using this <a href="https://www.docker.com/" rel="nofollow">Docker</a><br>
+container:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">cat README.md <span class="pl-k">|</span> docker run --rm -i docker.io/hugojosefson/markdown <span class="pl-k">&gt;</span> README.html</pre></div>
+<p>Explore the <a href="https://www.docker.com/" rel="nofollow">Docker</a> image manually:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">docker run --rm -it --entrypoint=bash docker.io/hugojosefson/markdown</pre></div>
+<h2>Configuration</h2>
+<p>Optional environment variable(s) to set via <code class="notranslate">docker run --env ...</code>:</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th align="left">name</th>
+<th align="left">value</th>
+<th align="left">consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code class="notranslate">LINK_README_TO_INDEX</code></td>
+<td align="left"><code class="notranslate">"true"</code></td>
+<td align="left">Renames relative links to files named <code class="notranslate">README.md</code> or <code class="notranslate">README.markdown</code> (case-insentitive) to <code class="notranslate">index.html</code>. You must output rendering of <code class="notranslate">README.md</code> files, to files named <code class="notranslate">index.html</code>, yourself.</td>
+</tr>
+<tr>
+<td align="left"><code class="notranslate">LINK_INDEX_TO_DIR</code></td>
+<td align="left"><code class="notranslate">"true"</code></td>
+<td align="left">Renames relative links to files named <code class="notranslate">index.html</code> (case-insentitive) to just the directory they are in. Use this to get nicer looking links, if your web server supports it.</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h1>Sample content</h1>
+<h2>Sample PlantUML</h2>
+<p>These examples use <a href="https://plantuml.com/" rel="nofollow">PlantUML</a>.</p>
+<div class="highlight highlight-source-wsd"><pre class="notranslate"><span class="pl-k">@startuml</span>
+<span class="pl-c1">Alice</span> <span class="pl-k">-&gt;</span> <span class="pl-c1">Bob</span> : POST /hello_png
+<span class="pl-k">@enduml</span></pre></div>
+<div class="highlight highlight-source-wsd"><pre class="notranslate"><span class="pl-k">@startuml</span>
+<span class="pl-c1">Alice</span> <span class="pl-k">-&gt;</span> <span class="pl-c1">Bob</span> : POST /hello_svg_inline
+<span class="pl-k">@enduml</span></pre></div>
+<div class="highlight highlight-source-wsd"><pre class="notranslate"><span class="pl-k">@startuml</span>
+<span class="pl-c1">Alice</span> <span class="pl-k">-&gt;</span> <span class="pl-c1">Bob</span> : POST /hello_txt
+<span class="pl-k">@enduml</span></pre></div>
+<h2>Sample GitHub Flavoured Markdown</h2>
+<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-v">-</span> <span class="pl-k">[ ]</span> todo
+<span class="pl-v">-</span> <span class="pl-k">[x]</span> done</pre></div>
+<p>...becomes...</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Incomplete task"> todo</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Completed task" checked=""> done</li>
+</ul>
+<h1>Development</h1>
+<h2>Format and test</h2>
+<p>Local development uses <a href="https://deno.com/" rel="nofollow">Deno</a>,<br>
+<a href="https://www.gnu.org/software/make/" rel="nofollow">GNU Make</a>, and<br>
+<a href="https://www.docker.com/" rel="nofollow">Docker</a>. Run these checks before pushing changes:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">deno fmt
+make <span class="pl-c1">test</span></pre></div>
+<p><code class="notranslate">make test</code> builds <code class="notranslate">docker.io/hugojosefson/markdown:latest</code> and runs the<br>
+source-artifact unit tests. The <a href="https://www.docker.com/" rel="nofollow">Docker</a> build renders<br>
+<a href="README.md">README.md</a>, <a href="tests/fixtures/renderer/general.md">general.md</a>, and<br>
+<a href="tests/fixtures/renderer/link-rewriting.md">link-rewriting.md</a>, then shows a<br>
+unified diff if an expected HTML fixture differs. Renderer expectations are in<br>
+<a href="tests/fixtures/renderer">tests/fixtures/renderer</a>; GitHub API comparisons are<br>
+in <a href="tests/fixtures/github-api">tests/fixtures/github-api</a>.</p>
+<p>Changes to source-artifact publication should also pass the local registry test.<br>
+It requires <a href="https://www.docker.com/" rel="nofollow">Docker</a> and <a href="https://oras.land/" rel="nofollow">ORAS</a>:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">make source-integration-test</pre></div>
+<h2>Update expected fixtures</h2>
+<p>Only update fixtures when the renderer's changed output is intentional:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">make fixtures</pre></div>
+<p>The link-rewriting fixture enables both link-rewriting environment variables.</p>
+<p>Refresh the GitHub API comparison fixtures separately. This uses existing<br>
+<a href="https://cli.github.com/">GitHub CLI</a> (<code class="notranslate">gh</code>) authentication:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">make gh-api-fixtures</pre></div>
+<h2>Update GitHub styles</h2>
+<p>Only use this when upgrading the vendored GitHub Markdown CSS:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">make update-css</pre></div>
+<p><a href="src/vendor/github-markdown.css">github-markdown.css</a> currently vendors<br>
+<a href="https://github.com/sindresorhus/github-markdown-css/releases/tag/v5.9.0">github-markdown-css v5.9.0</a>,<br>
+including automatic light/dark <code class="notranslate">prefers-color-scheme</code> support. The update<br>
+command discovers the latest stable release, resolves its tag to an immutable<br>
+commit, recalculates hashes, stages the versioned notice and provenance for<br>
+review, and regenerates local and GitHub API fixtures. It requires existing<br>
+<a href="https://cli.github.com/">GitHub CLI</a> (<code class="notranslate">gh</code>) authentication for the GitHub API<br>
+fixture refresh. Review the diff.</p>
+<h2>Run CI locally</h2>
+<p>Requires <a href="https://www.docker.com/" rel="nofollow">Docker</a>, <a href="https://nektosact.com/" rel="nofollow">act</a>, and<br>
+existing <a href="https://cli.github.com/">GitHub CLI</a> (<code class="notranslate">gh</code>) authentication with a<br>
+token usable by the workflow:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">make ci-local</pre></div>
+<h2>Update dependency notices</h2>
+<p>Use this after changing a dependency version. Notice provenance and checksums<br>
+live in<br>
+<a href="compliance/third-party-license-sources.tsv">compliance/third-party-license-sources.tsv</a>.</p>
+<p>Download only the notice set for review:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">./scripts/download-third-party-licenses.sh --notices-only</pre></div>
+<p>Omit <code class="notranslate">--notices-only</code> to also download the listed source archives:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">./scripts/download-third-party-licenses.sh</pre></div>
+<p>The script verifies every download and refuses to overwrite a changed review<br>
+file. The image stores the project license and approved dependency notices under<br>
+<code class="notranslate">/usr/share/licenses/markdown/</code>.</p>
+<h2>Inspect corresponding-source inputs</h2>
+<p>Use this when changing the image's packages or source-artifact workflow. It<br>
+queries both platforms without downloading source files:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">make source-inventory \
+  SOURCE_IMAGE=docker.io/hugojosefson/markdown@sha256:<span class="pl-k">&lt;</span>index-digest<span class="pl-k">&gt;</span></pre></div>
+<p>The input must be a published multi-platform index because a native local build<br>
+does not provide both platforms.</p>
+<p>Validate a collection request without downloading sources:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">./scripts/source-artifact.sh collect \
+  docker.io/hugojosefson/markdown@sha256:<span class="pl-k">&lt;</span>index-digest<span class="pl-k">&gt;</span> \
+  vX.Y.Z source-artifact --dry-run</pre></div>
+<p><a href="docs/corresponding-source.md">docs/corresponding-source.md</a> documents artifact<br>
+retrieval and verification.</p>
+<h1>Release</h1>
+<h2>Prerequisites</h2>
+<p>Releases require these GitHub repository secrets:</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th align="left">Secret</th>
+<th align="left">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code class="notranslate">DOCKERHUB_USERNAME</code></td>
+<td align="left">Docker Hub account name</td>
+</tr>
+<tr>
+<td align="left"><code class="notranslate">DOCKERHUB_TOKEN</code></td>
+<td align="left">Docker Hub publishing token</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>Pull requests and branch pushes run the test job without publishing.</p>
+<h2>Publish a version</h2>
+<p>Use <a href="https://git-scm.com/" rel="nofollow">Git</a> to push a semantic version tag after its commit<br>
+passes CI:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">git tag vX.Y.Z
+git push origin vX.Y.Z</pre></div>
+<p>The tag publishes<br>
+<a href="https://hub.docker.com/r/hugojosefson/markdown" rel="nofollow"><code class="notranslate">docker.io/hugojosefson/markdown</code></a><br>
+with semantic version tags and <code class="notranslate">latest</code>. The image index includes an SBOM and<br>
+provenance attestation.</p>
+<h2>Corresponding source</h2>
+<p>The release job attaches a corresponding-source OCI artifact to the published<br>
+image index. It applies these retention tags:</p>
+<pre lang="text" class="notranslate"><code class="notranslate">source-vX.Y.Z
+source-sha256-&lt;64-hex-index-digest&gt;
+</code></pre>
+<p>Each source archive or sdist uses a separate OCI layer, allowing unchanged blobs<br>
+to be reused across releases. See<br>
+<a href="docs/corresponding-source.md">docs/corresponding-source.md</a> for retrieval and<br>
+verification commands.</p>
+<p>Source collection starts after the runtime image is published. A collection or<br>
+attachment error therefore fails the release job after the runtime image may<br>
+already be visible.</p>
+<p><em>Acknowledgements: This project wraps<br>
+<a href="https://pypi.org/project/plantuml-markdown/" rel="nofollow">mikitex70/plantuml-markdown</a>,<br>
+<a href="https://pypi.org/project/markdown-checklist/" rel="nofollow">markdown-checklist</a>,<br>
+<a href="https://pypi.org/project/pymdown-extensions/" rel="nofollow">pymdown-extensions</a>,<br>
+<a href="https://pypi.org/project/Pygments/" rel="nofollow">Pygments</a>, and<br>
+<a href="https://github.com/sindresorhus/github-markdown-css">github-markdown-css</a> into<br>
+an <a href="https://alpinelinux.org/" rel="nofollow">Alpine Linux</a> <a href="https://www.docker.com/" rel="nofollow">Docker</a><br>
+image. I forked this originally from<br>
+<a href="https://github.com/kerhac/plantuml-markdown-docker">kerhac/plantuml-markdown-docker</a>.</em></p></article>
 <style>
 .markdown-body {
   --base-size-16: 1rem;

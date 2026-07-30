@@ -8,15 +8,14 @@ Pipe html contents into the process, and you will get html as output.
 
 ## Examples
 
-Render `README.md` as html using this
-[Docker](https://docs.docker.com/get-started/get-docker/) container:
+Render `README.md` as html using this [Docker](https://www.docker.com/)
+container:
 
 ```bash
 cat README.md | docker run --rm -i docker.io/hugojosefson/markdown > README.html
 ```
 
-Explore the [Docker](https://docs.docker.com/get-started/get-docker/) image
-manually:
+Explore the [Docker](https://www.docker.com/) image manually:
 
 ```bash
 docker run --rm -it --entrypoint=bash docker.io/hugojosefson/markdown
@@ -71,11 +70,9 @@ Alice -> Bob : POST /hello_txt
 
 ## Format and test
 
-Local development uses
-[Deno](https://docs.deno.com/runtime/getting_started/installation/),
+Local development uses [Deno](https://deno.com/),
 [GNU Make](https://www.gnu.org/software/make/), and
-[Docker](https://docs.docker.com/get-started/get-docker/). Run these checks
-before pushing changes:
+[Docker](https://www.docker.com/). Run these checks before pushing changes:
 
 ```bash
 deno fmt
@@ -83,15 +80,15 @@ make test
 ```
 
 `make test` builds `docker.io/hugojosefson/markdown:latest` and runs the
-source-artifact unit tests. The
-[Docker](https://docs.docker.com/get-started/get-docker/) build renders
-[README.md](README.md), [fixture.md](fixture.md), and
-[link-rewriting.md](link-rewriting.md), then shows a unified diff if an expected
-HTML fixture differs.
+source-artifact unit tests. The [Docker](https://www.docker.com/) build renders
+[README.md](README.md), [general.md](tests/fixtures/renderer/general.md), and
+[link-rewriting.md](tests/fixtures/renderer/link-rewriting.md), then shows a
+unified diff if an expected HTML fixture differs. Renderer expectations are in
+[tests/fixtures/renderer](tests/fixtures/renderer); GitHub API comparisons are
+in [tests/fixtures/github-api](tests/fixtures/github-api).
 
 Changes to source-artifact publication should also pass the local registry test.
-It requires [Docker](https://docs.docker.com/get-started/get-docker/) and
-[ORAS](https://oras.land/docs/installation):
+It requires [Docker](https://www.docker.com/) and [ORAS](https://oras.land/):
 
 ```bash
 make source-integration-test
@@ -122,7 +119,7 @@ Only use this when upgrading the vendored GitHub Markdown CSS:
 make update-css
 ```
 
-[github-markdown.css](github-markdown.css) currently vendors
+[github-markdown.css](src/vendor/github-markdown.css) currently vendors
 [github-markdown-css v5.9.0](https://github.com/sindresorhus/github-markdown-css/releases/tag/v5.9.0),
 including automatic light/dark `prefers-color-scheme` support. The update
 command discovers the latest stable release, resolves its tag to an immutable
@@ -133,10 +130,9 @@ fixture refresh. Review the diff.
 
 ## Run CI locally
 
-Requires [Docker](https://docs.docker.com/get-started/get-docker/),
-[act](https://nektosact.com/installation/index.html), and existing
-[GitHub CLI](https://cli.github.com/) (`gh`) authentication with a token usable
-by the workflow:
+Requires [Docker](https://www.docker.com/), [act](https://nektosact.com/), and
+existing [GitHub CLI](https://cli.github.com/) (`gh`) authentication with a
+token usable by the workflow:
 
 ```bash
 make ci-local
@@ -145,18 +141,19 @@ make ci-local
 ## Update dependency notices
 
 Use this after changing a dependency version. Notice provenance and checksums
-live in [third-party-license-sources.tsv](third-party-license-sources.tsv).
+live in
+[compliance/third-party-license-sources.tsv](compliance/third-party-license-sources.tsv).
 
 Download only the notice set for review:
 
 ```bash
-./download-third-party-licenses.sh --notices-only
+./scripts/download-third-party-licenses.sh --notices-only
 ```
 
 Omit `--notices-only` to also download the listed source archives:
 
 ```bash
-./download-third-party-licenses.sh
+./scripts/download-third-party-licenses.sh
 ```
 
 The script verifies every download and refuses to overwrite a changed review
@@ -179,12 +176,13 @@ does not provide both platforms.
 Validate a collection request without downloading sources:
 
 ```bash
-./source-artifact.sh collect \
+./scripts/source-artifact.sh collect \
   docker.io/hugojosefson/markdown@sha256:<index-digest> \
   vX.Y.Z source-artifact --dry-run
 ```
 
-[SOURCE.md](SOURCE.md) documents artifact retrieval and verification.
+[docs/corresponding-source.md](docs/corresponding-source.md) documents artifact
+retrieval and verification.
 
 # Release
 
@@ -201,8 +199,8 @@ Pull requests and branch pushes run the test job without publishing.
 
 ## Publish a version
 
-Use [Git](https://git-scm.com/downloads) to push a semantic version tag after
-its commit passes CI:
+Use [Git](https://git-scm.com/) to push a semantic version tag after its commit
+passes CI:
 
 ```bash
 git tag vX.Y.Z
@@ -225,7 +223,8 @@ source-sha256-<64-hex-index-digest>
 ```
 
 Each source archive or sdist uses a separate OCI layer, allowing unchanged blobs
-to be reused across releases. See [SOURCE.md](SOURCE.md) for retrieval and
+to be reused across releases. See
+[docs/corresponding-source.md](docs/corresponding-source.md) for retrieval and
 verification commands.
 
 Source collection starts after the runtime image is published. A collection or
@@ -238,7 +237,6 @@ _Acknowledgements: This project wraps
 [pymdown-extensions](https://pypi.org/project/pymdown-extensions/),
 [Pygments](https://pypi.org/project/Pygments/), and
 [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) into
-an [Alpine Linux](https://alpinelinux.org/)
-[Docker](https://docs.docker.com/get-started/get-docker/) image. I forked this
-originally from
+an [Alpine Linux](https://alpinelinux.org/) [Docker](https://www.docker.com/)
+image. I forked this originally from
 [kerhac/plantuml-markdown-docker](https://github.com/kerhac/plantuml-markdown-docker)._

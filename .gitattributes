@@ -1,2 +1,2 @@
-README.html whitespace=-blank-at-eol
-fixture.html whitespace=-blank-at-eol
+tests/fixtures/renderer/README.html whitespace=-blank-at-eol
+tests/fixtures/renderer/general.html whitespace=-blank-at-eol

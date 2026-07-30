@@ -12,16 +12,16 @@ test: build source-test
 ## Regenerate fixtures with the pre-test runtime, then verify the final image.
 fixtures:
 	docker build --target runtime --tag "$(IMAGE)" .
-	./regenerate-fixtures.sh
+	./scripts/regenerate-fixtures.sh
 	docker build --tag "$(IMAGE)" .
 
 ## Regenerate GitHub Markdown API comparison fixtures using existing gh auth.
 gh-api-fixtures:
-	./regenerate-gh-api-fixtures.sh
+	./scripts/regenerate-gh-api-fixtures.sh
 
 ## Discover and vendor the latest stable github-markdown-css release.
 update-css:
-	./update-css.sh
+	./scripts/update-css.sh
 	$(MAKE) fixtures
 	$(MAKE) gh-api-fixtures
 
@@ -32,7 +32,7 @@ ci-local:
 ## Query a published immutable multi-platform image without downloading sources.
 source-inventory:
 	@test -n "$(SOURCE_IMAGE)" || { printf '%s\n' 'Set SOURCE_IMAGE=IMAGE@sha256:DIGEST; a native local build cannot supply both platforms.' >&2; exit 1; }
-	./source-artifact.sh inventory "$(SOURCE_IMAGE)" source-inventory.json
+	./scripts/source-artifact.sh inventory "$(SOURCE_IMAGE)" source-inventory.json
 
 ## Test source artifact metadata parsing and canonicalization; no source artifacts are created.
 source-test:

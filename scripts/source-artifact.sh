@@ -2,10 +2,10 @@
 # Create, inspect, publish, and verify OCI corresponding-source artifacts.
 set -euo pipefail
 
-ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 readonly ROOT
-readonly HELPER="${ROOT}/source-artifact.py"
-readonly POLICY="${ROOT}/source-artifact-policy.json"
+readonly HELPER="${ROOT}/scripts/source-artifact.py"
+readonly POLICY="${ROOT}/compliance/source-artifact-policy.json"
 readonly ARTIFACT_TYPE="application/vnd.hugojosefson.markdown.source.v1"
 ORAS_FLAGS=()
 case "${SOURCE_ARTIFACT_PLAIN_HTTP:-false}" in

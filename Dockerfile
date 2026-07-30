@@ -40,18 +40,19 @@ RUN pip install --no-cache-dir --requirement requirements.txt
 
 COPY --chown=markdown:markdown LICENSE /usr/share/licenses/markdown/LICENSE
 COPY --chown=markdown:markdown THIRD_PARTY_NOTICES/ /usr/share/licenses/markdown/THIRD_PARTY_NOTICES/
-COPY --chown=markdown:markdown SOURCE.md /usr/share/licenses/markdown/SOURCE.md
+COPY --chown=markdown:markdown docs/corresponding-source.md /usr/share/licenses/markdown/SOURCE.md
 COPY --from=plantuml /plantuml.jar /app/plantuml.jar
-COPY md2html wrap_begin.html wrap_end_1.html wrap_end_2.html github-markdown.css ./
+COPY --chown=markdown:markdown src/ /app/src/
 RUN printf '%s\n' '#!/bin/sh' 'exec java -jar /app/plantuml.jar "$@"' > /usr/local/bin/plantuml \
-    && chmod 0555 /usr/local/bin/plantuml md2html \
-    && cat wrap_end_1.html github-markdown.css wrap_end_2.html > wrap_end.html \
+    && chmod 0555 /usr/local/bin/plantuml /app/src/md2html \
+    && cat /app/src/templates/wrap_end_1.html /app/src/vendor/github-markdown.css /app/src/templates/wrap_end_2.html > /app/src/templates/wrap_end.html \
     && chown -R markdown:markdown /app
 
 FROM runtime AS fixture-test
-COPY --chown=markdown:markdown test-fixtures.sh README.md README.html fixture.md fixture.html link-rewriting.md link-rewriting.html ./
+COPY --chown=markdown:markdown README.md /app/README.md
+COPY --chown=markdown:markdown tests/ /app/tests/
 USER markdown
-RUN chmod 0555 test-fixtures.sh \
+RUN chmod 0555 /app/tests/test-renderer-fixtures.sh \
     && printf '%s\n' '@startuml' 'Alice -> Bob' '@enduml' > /tmp/smoke.puml \
     && plantuml -tpng /tmp/smoke.puml \
     && test -s /tmp/smoke.png \
@@ -59,7 +60,7 @@ RUN chmod 0555 test-fixtures.sh \
     && test -r /usr/share/licenses/markdown/LICENSE \
     && test -r /usr/share/licenses/markdown/SOURCE.md \
     && test -r /usr/share/licenses/markdown/THIRD_PARTY_NOTICES/PlantUML-1.2026.6-COPYING \
-    && ./test-fixtures.sh \
+    && /app/tests/test-renderer-fixtures.sh \
     && touch /tmp/test-passed
 
 FROM runtime AS final
@@ -67,4 +68,4 @@ FROM runtime AS final
 COPY --from=fixture-test /tmp/test-passed /tmp/test-passed
 USER markdown
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["./md2html"]
+CMD ["/app/src/md2html"]

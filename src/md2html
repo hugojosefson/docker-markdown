@@ -3,6 +3,9 @@
 set -euo pipefail
 IFS=$'\t\n'
 
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly script_dir
+
 rename_markdown_to_html() {
   sed -E '/^Ahref CDATA [a-z]+:/! s/^Ahref CDATA (.*)\.(md|markdown)(#.*)?$/Ahref CDATA \1.html\3/ig'
 }
@@ -27,7 +30,7 @@ link_index_html_to_dir() {
 }
 
 main() {
-  cat wrap_begin.html
+  cat "${script_dir}/templates/wrap_begin.html"
 
   markdown_py \
     -q \
@@ -42,7 +45,7 @@ main() {
     link_index_html_to_dir |
     hxunpipe
 
-  cat wrap_end.html
+  cat "${script_dir}/templates/wrap_end.html"
 }
 
 main "$@"

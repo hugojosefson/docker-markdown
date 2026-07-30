@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-docker push docker.io/hugojosefson/markdown:latest

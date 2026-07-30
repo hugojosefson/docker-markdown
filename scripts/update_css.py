@@ -133,7 +133,7 @@ def update(root, fetch=http_get, api_base="https://api.github.com"):
     source_hash = sha256(source_css)
     vendored_hash = sha256(vendored_css)
 
-    manifest_path = root / "third-party-license-sources.tsv"
+    manifest_path = root / "compliance/third-party-license-sources.tsv"
     rows, (old_index, old_columns) = parse_manifest(manifest_path)
     old_path = NOTICE_PATH.fullmatch(old_columns[1])
     if (old_columns[0] != "notice" or not old_path
@@ -172,7 +172,7 @@ def update(root, fetch=http_get, api_base="https://api.github.com"):
         f"source-sha256: {source_hash}\n"
         f"vendored-sha256: {vendored_hash}\n"
     ).encode()
-    version_path = root / "github-markdown.css.version"
+    version_path = root / "src/vendor/github-markdown.css.version"
     current_version = re.findall(
         r"^github-markdown-css: ([0-9]+\.[0-9]+\.[0-9]+)$",
         version_path.read_text(encoding="utf-8"),
@@ -195,13 +195,10 @@ def update(root, fetch=http_get, api_base="https://api.github.com"):
     )
     if count != 1:
         raise ValueError("expected one current github-markdown-css README release link")
-    wrap = (root / "wrap_end_1.html").read_bytes() + vendored_css + (root / "wrap_end_2.html").read_bytes()
-
     # Validate all inputs before replacing any tracked file.
     writes = {
-        root / "github-markdown.css": vendored_css,
+        root / "src/vendor/github-markdown.css": vendored_css,
         version_path: version_contents,
-        root / "wrap_end.html": wrap,
         root / "README.md": readme.encode(),
         manifest_path: ("\n".join(rows) + "\n").encode(),
         new_notice: license_contents,
@@ -216,7 +213,7 @@ def update(root, fetch=http_get, api_base="https://api.github.com"):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--api-base", default="https://api.github.com")
     arguments = parser.parse_args()
     update(arguments.root, api_base=arguments.api_base)

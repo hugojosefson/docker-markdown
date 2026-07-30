@@ -2,8 +2,8 @@
   "exclude": [
     "THIRD_PARTY_NOTICES",
     "LICENSE",
-    "fixture.md",
-    "*.html",
-    "*.css"
+    "src/templates",
+    "src/vendor",
+    "tests/fixtures"
   ]
 }

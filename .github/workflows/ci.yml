@@ -85,6 +85,6 @@ jobs:
           IMAGE: docker.io/hugojosefson/markdown
           SUBJECT_DIGEST: ${{ steps.build-push.outputs.digest }}
         run: |
-          ./source-artifact.sh collect "${IMAGE}@${SUBJECT_DIGEST}" "${GITHUB_REF_NAME}" source-artifact
-          artifact_digest="$(./source-artifact.sh publish "${IMAGE}" "${SUBJECT_DIGEST}" "${GITHUB_REF_NAME}" source-artifact)"
-          ./source-artifact.sh verify-published "${IMAGE}" "${SUBJECT_DIGEST}" "${GITHUB_REF_NAME}" "${artifact_digest}"
+          ./scripts/source-artifact.sh collect "${IMAGE}@${SUBJECT_DIGEST}" "${GITHUB_REF_NAME}" source-artifact
+          artifact_digest="$(./scripts/source-artifact.sh publish "${IMAGE}" "${SUBJECT_DIGEST}" "${GITHUB_REF_NAME}" source-artifact)"
+          ./scripts/source-artifact.sh verify-published "${IMAGE}" "${SUBJECT_DIGEST}" "${GITHUB_REF_NAME}" "${artifact_digest}"

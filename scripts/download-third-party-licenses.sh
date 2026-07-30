@@ -4,7 +4,9 @@ set -euo pipefail
 IFS=$'\t\n'
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-manifest="${script_dir}/third-party-license-sources.tsv"
+root="$(cd -- "${script_dir}/.." && pwd)"
+readonly script_dir root
+manifest="${root}/compliance/third-party-license-sources.tsv"
 notices_only=false
 dry_run=false
 
@@ -31,7 +33,7 @@ while [[ "${#}" -gt 0 ]]; do
   shift
 done
 
-output_root="${1:-${script_dir}}"
+output_root="${1:-${root}}"
 if [[ "${#}" -gt 1 ]]; then
   printf 'Only one OUTPUT_ROOT may be specified.\n' >&2
   exit 2

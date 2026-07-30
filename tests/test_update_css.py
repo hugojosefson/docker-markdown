@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import update_css
 
 
@@ -25,20 +25,20 @@ class CssUpdaterTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         root = Path(temporary.name)
         (root / "THIRD_PARTY_NOTICES").mkdir()
+        (root / "compliance").mkdir()
+        (root / "src/vendor").mkdir(parents=True)
         old_notice = root / "THIRD_PARTY_NOTICES/github-markdown-css-1.0.0-license"
         old_notice.write_bytes(OLD_NOTICE if not modified_notice else b"Modified dummy notice.\n")
-        (root / "third-party-license-sources.tsv").write_text(
+        (root / "compliance/third-party-license-sources.tsv").write_text(
             "# kind\tdestination\tsha256\timmutable-or-authoritative-url\tcomponent\n"
             f"notice\tTHIRD_PARTY_NOTICES/github-markdown-css-1.0.0-license\t{digest(OLD_NOTICE)}\thttps://raw.githubusercontent.com/sindresorhus/github-markdown-css/{'c' * 40}/license\tgithub-markdown-css 1.0.0\n"
         )
         (root / "README.md").write_text(
             "[github-markdown-css v1.0.0](https://github.com/sindresorhus/github-markdown-css/releases/tag/v1.0.0)\n"
         )
-        (root / "github-markdown.css.version").write_text(
+        (root / "src/vendor/github-markdown.css.version").write_text(
             "github-markdown-css: 1.0.0\n"
         )
-        (root / "wrap_end_1.html").write_text("start\n")
-        (root / "wrap_end_2.html").write_text("end\n")
         return temporary, root
 
     def fetch(self, url):
@@ -56,21 +56,20 @@ class CssUpdaterTests(unittest.TestCase):
         temporary, root = self.make_root()
         with temporary:
             update_css.update(root, fetch=self.fetch)
-            self.assertEqual((root / "github-markdown.css").read_bytes(), CSS[:-1])
-            version = (root / "github-markdown.css.version").read_text()
+            self.assertEqual((root / "src/vendor/github-markdown.css").read_bytes(), CSS[:-1])
+            version = (root / "src/vendor/github-markdown.css.version").read_text()
             self.assertIn("github-markdown-css: 2.3.4", version)
             self.assertIn(f"immutable-commit: {COMMIT}", version)
             self.assertIn(update_css.immutable_url(COMMIT, "github-markdown.css"), version)
             self.assertIn(f"source-sha256: {digest(CSS)}", version)
             self.assertIn(f"vendored-sha256: {digest(CSS[:-1])}", version)
-            self.assertEqual((root / "wrap_end.html").read_bytes(), b"start\n" + CSS[:-1] + b"end\n")
             self.assertIn("github-markdown-css v2.3.4", (root / "README.md").read_text())
-            manifest = (root / "third-party-license-sources.tsv").read_text()
+            manifest = (root / "compliance/third-party-license-sources.tsv").read_text()
             self.assertIn(f"github-markdown-css-2.3.4-license\t{digest(NOTICE)}", manifest)
             self.assertIn(update_css.immutable_url(COMMIT, "license"), manifest)
             self.assertFalse((root / "THIRD_PARTY_NOTICES/github-markdown-css-1.0.0-license").exists())
             self.assertEqual((root / "THIRD_PARTY_NOTICES/github-markdown-css-2.3.4-license").read_bytes(), NOTICE)
-            self.assertEqual((root / "github-markdown.css").stat().st_mode & 0o777, 0o644)
+            self.assertEqual((root / "src/vendor/github-markdown.css").stat().st_mode & 0o777, 0o644)
             before = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}
             update_css.update(root, fetch=self.fetch)
             after = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}
@@ -81,14 +80,14 @@ class CssUpdaterTests(unittest.TestCase):
         with temporary:
             with self.assertRaisesRegex(ValueError, "unverified notice"):
                 update_css.update(root, fetch=self.fetch)
-            self.assertFalse((root / "github-markdown.css").exists())
+            self.assertFalse((root / "src/vendor/github-markdown.css").exists())
             self.assertTrue((root / "THIRD_PARTY_NOTICES/github-markdown-css-1.0.0-license").exists())
             self.assertFalse((root / "THIRD_PARTY_NOTICES/github-markdown-css-2.3.4-license").exists())
 
     def test_rejects_unsafe_notice_path(self):
         temporary, root = self.make_root()
         with temporary:
-            manifest = root / "third-party-license-sources.tsv"
+            manifest = root / "compliance/third-party-license-sources.tsv"
             manifest.write_text(
                 f"notice\t../outside\t{digest(OLD_NOTICE)}\thttps://example.invalid/license\tgithub-markdown-css 1.0.0\n"
             )
@@ -103,7 +102,7 @@ class CssUpdaterTests(unittest.TestCase):
     def test_refuses_downgrade(self):
         temporary, root = self.make_root()
         with temporary:
-            manifest = root / "third-party-license-sources.tsv"
+            manifest = root / "compliance/third-party-license-sources.tsv"
             old_commit = "c" * 40
             old_notice = root / "THIRD_PARTY_NOTICES/github-markdown-css-9.0.0-license"
             old_notice.write_bytes(OLD_NOTICE)
@@ -111,7 +110,7 @@ class CssUpdaterTests(unittest.TestCase):
             manifest.write_text(
                 f"notice\tTHIRD_PARTY_NOTICES/github-markdown-css-9.0.0-license\t{digest(OLD_NOTICE)}\t{update_css.immutable_url(old_commit, 'license')}\tgithub-markdown-css 9.0.0\n"
             )
-            (root / "github-markdown.css.version").write_text("github-markdown-css: 9.0.0\n")
+            (root / "src/vendor/github-markdown.css.version").write_text("github-markdown-css: 9.0.0\n")
             (root / "README.md").write_text(
                 "[github-markdown-css v9.0.0](https://github.com/sindresorhus/github-markdown-css/releases/tag/v9.0.0)\n"
             )
@@ -125,10 +124,10 @@ class CssUpdaterTests(unittest.TestCase):
             old_notice = root / "THIRD_PARTY_NOTICES/github-markdown-css-2.3.4-license"
             old_notice.write_bytes(OLD_NOTICE)
             (root / "THIRD_PARTY_NOTICES/github-markdown-css-1.0.0-license").unlink()
-            (root / "third-party-license-sources.tsv").write_text(
+            (root / "compliance/third-party-license-sources.tsv").write_text(
                 f"notice\tTHIRD_PARTY_NOTICES/github-markdown-css-2.3.4-license\t{digest(OLD_NOTICE)}\t{update_css.immutable_url(old_commit, 'license')}\tgithub-markdown-css 2.3.4\n"
             )
-            (root / "github-markdown.css.version").write_text("github-markdown-css: 2.3.4\n")
+            (root / "src/vendor/github-markdown.css.version").write_text("github-markdown-css: 2.3.4\n")
             (root / "README.md").write_text(
                 "[github-markdown-css v2.3.4](https://github.com/sindresorhus/github-markdown-css/releases/tag/v2.3.4)\n"
             )
