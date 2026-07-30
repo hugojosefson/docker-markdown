@@ -1,4 +1,6 @@
 github-markdown-css: 5.9.0
-source: https://raw.githubusercontent.com/sindresorhus/github-markdown-css/v5.9.0/github-markdown.css
+tag: v5.9.0
+immutable-commit: 265b22aa79815418195f453352456d5784bb7580
+immutable-source: https://raw.githubusercontent.com/sindresorhus/github-markdown-css/265b22aa79815418195f453352456d5784bb7580/github-markdown.css
 source-sha256: 6112686f954db5d3806fb96116d2ab20ad3018469ab1015c587fd8efe7d25cf4
 vendored-sha256: e046acf945dc988fd66e6e90c3473f1812f723d4235517b3ebe64a678ce6c78d
