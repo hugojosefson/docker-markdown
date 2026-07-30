@@ -108,8 +108,14 @@ fi
 }
 
 git -C "${root}" tag "${release}" HEAD
+runtime_pushed=false
+collection_verified=false
 cleanup() {
   git -C "${root}" tag --delete "${release}" >/dev/null 2>&1 || true
+  if [[ "${runtime_pushed}" == true && "${collection_verified}" == false ]]; then
+    printf 'Temporary runtime image remains after failure: %s\n' "${runtime_reference}" >&2
+    printf 'Delete that tag from Docker Hub after investigation.\n' >&2
+  fi
 }
 trap cleanup EXIT
 
@@ -120,6 +126,7 @@ docker buildx build \
   --tag "${runtime_reference}" \
   --push \
   "${root}"
+runtime_pushed=true
 
 subject_digest="$(
   docker buildx imagetools inspect "${runtime_reference}" \
@@ -140,6 +147,7 @@ python3 "${root}/scripts/source-artifact.py" verify \
   --release "${release}" \
   --subject "${image}@${subject_digest}"
 
+collection_verified=true
 printf 'Source collection verified: %s\n' "${output}"
 printf 'Temporary runtime image remains for review: %s\n' "${runtime_reference}"
 printf 'Delete that tag from Docker Hub after review.\n'

@@ -34,9 +34,9 @@ inventory() (
       '# syntax=docker/dockerfile:1' \
       'ARG SOURCE_IMAGE=scratch' \
       "FROM \${SOURCE_IMAGE} AS inventory" \
-      "RUN apk query --from installed --fields name,version,arch,license,origin,commit --format json '*' > /apk-inventory.json" \
+      "RUN apk query --from installed --fields name,version,arch,license,origin,commit --format json '*' > /tmp/apk-inventory.json" \
       'FROM scratch' \
-      'COPY --from=inventory /apk-inventory.json /apk-inventory.json' \
+      'COPY --from=inventory /tmp/apk-inventory.json /apk-inventory.json' \
       > "${temporary}/context/Dockerfile"
     docker buildx build \
       --builder "${SOURCE_ARTIFACT_BUILDER}" \
