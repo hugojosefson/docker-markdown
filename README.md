@@ -8,13 +8,15 @@ Pipe html contents into the process, and you will get html as output.
 
 ## Examples
 
-Render `README.md` as html using this Docker container:
+Render `README.md` as html using this
+[Docker](https://docs.docker.com/get-started/get-docker/) container:
 
 ```bash
 cat README.md | docker run --rm -i docker.io/hugojosefson/markdown > README.html
 ```
 
-Explore the Docker image manually:
+Explore the [Docker](https://docs.docker.com/get-started/get-docker/) image
+manually:
 
 ```bash
 docker run --rm -it --entrypoint=bash docker.io/hugojosefson/markdown
@@ -32,6 +34,8 @@ Optional environment variable(s) to set via `docker run --env ...`:
 # Sample content
 
 ## Sample PlantUML
+
+These examples use [PlantUML](https://plantuml.com/).
 
 ```plantuml
 @startuml
@@ -67,7 +71,11 @@ Alice -> Bob : POST /hello_txt
 
 ## Format and test
 
-Run these checks before pushing changes:
+Local development uses
+[Deno](https://docs.deno.com/runtime/getting_started/installation/),
+[GNU Make](https://www.gnu.org/software/make/), and
+[Docker](https://docs.docker.com/get-started/get-docker/). Run these checks
+before pushing changes:
 
 ```bash
 deno fmt
@@ -75,12 +83,15 @@ make test
 ```
 
 `make test` builds `docker.io/hugojosefson/markdown:latest` and runs the
-source-artifact unit tests. The Docker build renders [README.md](README.md),
-[fixture.md](fixture.md), and [link-rewriting.md](link-rewriting.md), then shows
-a unified diff if an expected HTML fixture differs.
+source-artifact unit tests. The
+[Docker](https://docs.docker.com/get-started/get-docker/) build renders
+[README.md](README.md), [fixture.md](fixture.md), and
+[link-rewriting.md](link-rewriting.md), then shows a unified diff if an expected
+HTML fixture differs.
 
 Changes to source-artifact publication should also pass the local registry test.
-It requires Docker and ORAS:
+It requires [Docker](https://docs.docker.com/get-started/get-docker/) and
+[ORAS](https://oras.land/docs/installation):
 
 ```bash
 make source-integration-test
@@ -96,8 +107,8 @@ make fixtures
 
 The link-rewriting fixture enables both link-rewriting environment variables.
 
-Refresh the GitHub API comparison fixtures separately. This uses existing `gh`
-authentication:
+Refresh the GitHub API comparison fixtures separately. This uses existing
+[GitHub CLI](https://cli.github.com/) (`gh`) authentication:
 
 ```bash
 make gh-api-fixtures
@@ -114,9 +125,22 @@ make update-css
 [github-markdown.css](github-markdown.css) currently vendors
 [github-markdown-css v5.9.0](https://github.com/sindresorhus/github-markdown-css/releases/tag/v5.9.0),
 including automatic light/dark `prefers-color-scheme` support. The update
-command checksum-verifies the pinned release, records its version, and rebuilds
-[wrap_end.html](wrap_end.html) atomically. Review the diff before changing the
-version or checksum in [update-css.sh](update-css.sh).
+command discovers the latest stable release, resolves its tag to an immutable
+commit, recalculates hashes, stages the versioned notice and provenance for
+review, and regenerates local and GitHub API fixtures. It requires existing
+[GitHub CLI](https://cli.github.com/) (`gh`) authentication for the GitHub API
+fixture refresh. Review the diff.
+
+## Run CI locally
+
+Requires [Docker](https://docs.docker.com/get-started/get-docker/),
+[act](https://nektosact.com/installation/index.html), and existing
+[GitHub CLI](https://cli.github.com/) (`gh`) authentication with a token usable
+by the workflow:
+
+```bash
+make ci-local
+```
 
 ## Update dependency notices
 
@@ -177,15 +201,18 @@ Pull requests and branch pushes run the test job without publishing.
 
 ## Publish a version
 
-Push a semantic version tag after its commit passes CI:
+Use [Git](https://git-scm.com/downloads) to push a semantic version tag after
+its commit passes CI:
 
 ```bash
 git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-The tag publishes `docker.io/hugojosefson/markdown` with semantic version tags
-and `latest`. The image index includes an SBOM and provenance attestation.
+The tag publishes
+[`docker.io/hugojosefson/markdown`](https://hub.docker.com/r/hugojosefson/markdown)
+with semantic version tags and `latest`. The image index includes an SBOM and
+provenance attestation.
 
 ## Corresponding source
 
@@ -211,5 +238,7 @@ _Acknowledgements: This project wraps
 [pymdown-extensions](https://pypi.org/project/pymdown-extensions/),
 [Pygments](https://pypi.org/project/Pygments/), and
 [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) into
-an alpine docker image. I forked this originally from
+an [Alpine Linux](https://alpinelinux.org/)
+[Docker](https://docs.docker.com/get-started/get-docker/) image. I forked this
+originally from
 [kerhac/plantuml-markdown-docker](https://github.com/kerhac/plantuml-markdown-docker)._

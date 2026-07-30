@@ -11,10 +11,12 @@
 <h1>Usage</h1>
 <p>Pipe html contents into the process, and you will get html as output.</p>
 <h2>Examples</h2>
-<p>Render <code>README.md</code> as html using this Docker container:</p>
+<p>Render <code>README.md</code> as html using this
+<a href="https://docs.docker.com/get-started/get-docker/">Docker</a> container:</p>
 <div class="highlight"><pre><span></span><code>cat<span class="w"> </span>README.md<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span>docker.io/hugojosefson/markdown<span class="w"> </span>&gt;<span class="w"> </span>README.html
 </code></pre></div>
-<p>Explore the Docker image manually:</p>
+<p>Explore the <a href="https://docs.docker.com/get-started/get-docker/">Docker</a> image
+manually:</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--entrypoint<span class="o">=</span>bash<span class="w"> </span>docker.io/hugojosefson/markdown
 </code></pre></div>
 <h2>Configuration</h2>
@@ -42,6 +44,7 @@
 </table>
 <h1>Sample content</h1>
 <h2>Sample PlantUML</h2>
+<p>These examples use <a href="https://plantuml.com/">PlantUML</a>.</p>
 <p><img alt="uml diagram" class="uml" src="data:image/png;base64,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" title="" /></p>
 <p><svg alt="uml diagram" class="uml" contentStyleType="text/css" data-diagram-type="SEQUENCE" preserveAspectRatio="xMaxYMax meet" style="background:#FFFFFF" title="" version="1.1" viewBox="0 0 218 130" width="100%" xmlns="http://www.w3.org/2000/svg" zoomAndPan="magnify"><defs /><g><g class="participant-lifeline" data-entity-uid="part1" data-qualified-name="Alice" data-source-line="1" id="part1-lifeline"><g><title>Alice</title><rect fill="#000000" fill-opacity="0.00000" height="51.706" width="8" x="23.3929" y="39.0679" /><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5,5;" x1="27" x2="27" y1="39.0679" y2="90.7739" /></g></g><g class="participant-lifeline" data-entity-uid="part2" data-qualified-name="Bob" data-source-line="1" id="part2-lifeline"><g><title>Bob</title><rect fill="#000000" fill-opacity="0.00000" height="51.706" width="8" x="183.7631" y="39.0679" /><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5,5;" x1="187.6731" x2="187.6731" y1="39.0679" y2="90.7739" /></g></g><g class="participant participant-head" data-entity-uid="part1" data-qualified-name="Alice" data-source-line="1" id="part1-head"><rect fill="#E2E2F0" height="33.0679" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="44.7859" x="5" y="5" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="30.7859" x="12" y="26.9659">Alice</text></g><g class="participant participant-tail" data-entity-uid="part1" data-qualified-name="Alice" data-source-line="1" id="part1-tail"><rect fill="#E2E2F0" height="33.0679" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="44.7859" x="5" y="89.7739" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="30.7859" x="12" y="111.7399">Alice</text></g><g class="participant participant-head" data-entity-uid="part2" data-qualified-name="Bob" data-source-line="1" id="part2-head"><rect fill="#E2E2F0" height="33.0679" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="40.1799" x="167.6731" y="5" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="26.1799" x="174.6731" y="26.9659">Bob</text></g><g class="participant participant-tail" data-entity-uid="part2" data-qualified-name="Bob" data-source-line="1" id="part2-tail"><rect fill="#E2E2F0" height="33.0679" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="40.1799" x="167.6731" y="89.7739" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="26.1799" x="174.6731" y="111.7399">Bob</text></g><g class="message" data-entity-1="part1" data-entity-2="part2" data-source-line="1" id="msg1"><polygon fill="#181818" points="175.7631,68.7739,185.7631,72.7739,175.7631,76.7739,179.7631,72.7739" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" /><line style="stroke:#181818;stroke-width:1;" x1="27.3929" x2="181.7631" y1="72.7739" y2="72.7739" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="136.3701" x="34.3929" y="66.9649">POST /hello_svg_inline</text></g></g></svg></p>
 <pre><code class="text">     ,-----.           ,---.
@@ -64,16 +67,23 @@
 </ul>
 <h1>Development</h1>
 <h2>Format and test</h2>
-<p>Run these checks before pushing changes:</p>
+<p>Local development uses
+<a href="https://docs.deno.com/runtime/getting_started/installation/">Deno</a>,
+<a href="https://www.gnu.org/software/make/">GNU Make</a>, and
+<a href="https://docs.docker.com/get-started/get-docker/">Docker</a>. Run these checks
+before pushing changes:</p>
 <div class="highlight"><pre><span></span><code>deno<span class="w"> </span>fmt
 make<span class="w"> </span><span class="nb">test</span>
 </code></pre></div>
 <p><code>make test</code> builds <code>docker.io/hugojosefson/markdown:latest</code> and runs the
-source-artifact unit tests. The Docker build renders <a href="README.html">README.md</a>,
-<a href="fixture.html">fixture.md</a>, and <a href="link-rewriting.html">link-rewriting.md</a>, then shows
-a unified diff if an expected HTML fixture differs.</p>
+source-artifact unit tests. The
+<a href="https://docs.docker.com/get-started/get-docker/">Docker</a> build renders
+<a href="README.html">README.md</a>, <a href="fixture.html">fixture.md</a>, and
+<a href="link-rewriting.html">link-rewriting.md</a>, then shows a unified diff if an expected
+HTML fixture differs.</p>
 <p>Changes to source-artifact publication should also pass the local registry test.
-It requires Docker and ORAS:</p>
+It requires <a href="https://docs.docker.com/get-started/get-docker/">Docker</a> and
+<a href="https://oras.land/docs/installation">ORAS</a>:</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>source-integration-test
 </code></pre></div>
 <h2>Update expected fixtures</h2>
@@ -81,8 +91,8 @@ It requires Docker and ORAS:</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>fixtures
 </code></pre></div>
 <p>The link-rewriting fixture enables both link-rewriting environment variables.</p>
-<p>Refresh the GitHub API comparison fixtures separately. This uses existing <code>gh</code>
-authentication:</p>
+<p>Refresh the GitHub API comparison fixtures separately. This uses existing
+<a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>) authentication:</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>gh-api-fixtures
 </code></pre></div>
 <h2>Update GitHub styles</h2>
@@ -92,9 +102,18 @@ authentication:</p>
 <p><a href="github-markdown.css">github-markdown.css</a> currently vendors
 <a href="https://github.com/sindresorhus/github-markdown-css/releases/tag/v5.9.0">github-markdown-css v5.9.0</a>,
 including automatic light/dark <code>prefers-color-scheme</code> support. The update
-command checksum-verifies the pinned release, records its version, and rebuilds
-<a href="wrap_end.html">wrap_end.html</a> atomically. Review the diff before changing the
-version or checksum in <a href="update-css.sh">update-css.sh</a>.</p>
+command discovers the latest stable release, resolves its tag to an immutable
+commit, recalculates hashes, stages the versioned notice and provenance for
+review, and regenerates local and GitHub API fixtures. It requires existing
+<a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>) authentication for the GitHub API
+fixture refresh. Review the diff.</p>
+<h2>Run CI locally</h2>
+<p>Requires <a href="https://docs.docker.com/get-started/get-docker/">Docker</a>,
+<a href="https://nektosact.com/installation/index.html">act</a>, and existing
+<a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>) authentication with a token usable
+by the workflow:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>ci-local
+</code></pre></div>
 <h2>Update dependency notices</h2>
 <p>Use this after changing a dependency version. Notice provenance and checksums
 live in <a href="third-party-license-sources.tsv">third-party-license-sources.tsv</a>.</p>
@@ -144,12 +163,15 @@ does not provide both platforms.</p>
 </table>
 <p>Pull requests and branch pushes run the test job without publishing.</p>
 <h2>Publish a version</h2>
-<p>Push a semantic version tag after its commit passes CI:</p>
+<p>Use <a href="https://git-scm.com/downloads">Git</a> to push a semantic version tag after
+its commit passes CI:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>tag<span class="w"> </span>vX.Y.Z
 git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>vX.Y.Z
 </code></pre></div>
-<p>The tag publishes <code>docker.io/hugojosefson/markdown</code> with semantic version tags
-and <code>latest</code>. The image index includes an SBOM and provenance attestation.</p>
+<p>The tag publishes
+<a href="https://hub.docker.com/r/hugojosefson/markdown"><code>docker.io/hugojosefson/markdown</code></a>
+with semantic version tags and <code>latest</code>. The image index includes an SBOM and
+provenance attestation.</p>
 <h2>Corresponding source</h2>
 <p>The release job attaches a corresponding-source OCI artifact to the published
 image index. It applies these retention tags:</p>
@@ -168,7 +190,9 @@ already be visible.</p>
 <a href="https://pypi.org/project/pymdown-extensions/">pymdown-extensions</a>,
 <a href="https://pypi.org/project/Pygments/">Pygments</a>, and
 <a href="https://github.com/sindresorhus/github-markdown-css">github-markdown-css</a> into
-an alpine docker image. I forked this originally from
+an <a href="https://alpinelinux.org/">Alpine Linux</a>
+<a href="https://docs.docker.com/get-started/get-docker/">Docker</a> image. I forked this
+originally from
 <a href="https://github.com/kerhac/plantuml-markdown-docker">kerhac/plantuml-markdown-docker</a>.</em></p></article>
 <style>
 .markdown-body {

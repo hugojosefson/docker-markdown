@@ -19,9 +19,15 @@ fixtures:
 gh-api-fixtures:
 	./regenerate-gh-api-fixtures.sh
 
-## Vendor github-markdown-css v5.9.0 from its immutable Git tag.
+## Discover and vendor the latest stable github-markdown-css release.
 update-css:
 	./update-css.sh
+	$(MAKE) fixtures
+	$(MAKE) gh-api-fixtures
+
+## Run the GitHub CI workflow locally; requires Docker, act, gh authentication, and its token scope.
+ci-local:
+	@GITHUB_TOKEN="$$(gh auth token)" act --secret GITHUB_TOKEN --workflows .github/workflows/ci.yml
 
 ## Query a published immutable multi-platform image without downloading sources.
 source-inventory:
@@ -36,4 +42,4 @@ source-test:
 source-integration-test:
 	bash tests/test_oras_integration.sh
 
-.PHONY: build test fixtures gh-api-fixtures update-css source-inventory source-test source-integration-test
+.PHONY: build test fixtures gh-api-fixtures update-css ci-local source-inventory source-test source-integration-test
